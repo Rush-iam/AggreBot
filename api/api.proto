@@ -1,0 +1,102 @@
+syntax = "proto3";
+package api;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "git@gitlab.ozon.dev:Rush-iam/homework-2.git/api";
+
+service NewsfeedConfigurator {
+  rpc addUser(UserId) returns (UserId) {
+    option (google.api.http) = {
+      post: "/user"
+      body: "*"
+    };
+  };
+  rpc updateUser(User) returns (google.protobuf.Empty);
+  rpc deleteUser(UserId) returns (google.protobuf.Empty);
+
+  rpc addGroup(AddGroupRequest) returns (GroupId);
+  rpc listUserGroups(UserId) returns (ListUserGroupsResponse);
+  rpc updateGroup(Group) returns (google.protobuf.Empty);
+  rpc deleteGroup(GroupId) returns (google.protobuf.Empty);
+
+  rpc addSource(AddSourceRequest) returns (SourceId);
+  rpc listGroupSources(GroupId) returns (ListGroupSourcesResponse);
+  rpc updateSource(UpdateSourceRequest) returns (google.protobuf.Empty);
+  rpc deleteSource(SourceId) returns (google.protobuf.Empty);
+}
+
+message UserId {
+  int64 id = 1;
+}
+
+message GroupId {
+  int64 id = 1;
+}
+
+message SourceId {
+  int64 id = 1;
+}
+
+/* Сущности:
+User - пользователь
+Group - группа источников
+Source - источник
+ */
+
+message User {
+  int64 id = 1;
+  bool active = 2;
+}
+
+message Group {
+  int64 id = 1;
+  int64 user_id = 2;
+  bool active = 3;
+  string name = 4;
+  optional string filter = 5;
+}
+
+message Source {
+  int64 id = 1;
+  int64 group_id = 2;
+  string name = 3;
+  bool active = 4;
+  string type = 5;
+  optional string ref_str = 6;
+  optional int64 ref_int = 7;
+  int64 last_checked = 8;
+  int64 retry_count = 9;
+}
+
+message AddGroupRequest {
+  int64 user_id = 1;
+  string name = 2;
+  optional string filter = 3;
+}
+
+message ListUserGroupsResponse {
+  repeated Group groups = 1;
+}
+
+message ListGroupSourcesResponse {
+  repeated Source sources = 1;
+}
+
+message AddSourceRequest {
+  int64 group_id = 1;
+  string name = 2;
+  string type = 3;
+  optional string ref_str = 5;
+  optional int64 ref_int = 6;
+}
+
+message UpdateSourceRequest {
+  int64 source_id = 1;
+  string name = 2;
+  bool active = 3;
+  string type = 4;
+  optional string ref_str = 5;
+  optional int64 ref_int = 6;
+}

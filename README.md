@@ -14,7 +14,7 @@
 - проверить статус чтения источников
 
 ### Для продвинутых пользователей
-С приложением можно общаться через HTTP API - через запросы gRPC или REST 
+С приложением можно общаться через HTTP API - запросами gRPC или REST 
 _(прокси к gRPC)_.
 
 
@@ -31,11 +31,11 @@ subgraph External
 end
 subgraph Docker Compose Application
     subgraph UserAPI [UserAPI Service]
-        HANDLERS(REST/gRPC<br/>handlers)
-        CONFIGURER((Newsfeed<br/>Configurer))
+        ENDPOINTS(REST/gRPC<br/>endpoints)
+        CONFIGURER((Newsfeed<br/>Configurator))
     end
     subgraph Database [Database Container]
-        DB[(DataBase)]
+        DB[(PostgreSQL)]
     end
     subgraph Worker Service
         POLLER((Poller))
@@ -43,17 +43,17 @@ subgraph Docker Compose Application
     end
 end
 
-DIRECT <-->|HTTP<br/>requests| HANDLERS
-TGUSER <==>|UI| HANDLERS
+DIRECT  <-->|HTTP<br/>requests| ENDPOINTS
+TGUSER  <==>|UI| ENDPOINTS
 TG -.->|channels| POLLER
 RSS -.->|feeds| POLLER
 
-HANDLERS ---|API calls| CONFIGURER<-->|Get/Update Config| DB
+ENDPOINTS ---|API calls| CONFIGURER<-->|Get/Update Config| DB
 
 DB -->|Get user:source:timestamp| POLLER 
 POLLER -->|go queue| SENDER
 SENDER -->|Update timestamp| DB
-TGUSER <==> |Newsfeed| SENDER
+TGUSER <==>|Newsfeed| SENDER
 
 ```
 Приложение бота разворачивается через **Docker Compose** на трёх 
