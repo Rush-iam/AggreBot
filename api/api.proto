@@ -4,22 +4,47 @@ package api;
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "git@gitlab.ozon.dev:Rush-iam/homework-2.git/api";
+option go_package = "./api";
 
 service NewsfeedConfigurator {
   rpc addUser(UserId) returns (UserId) {
     option (google.api.http) = {
-      post: "/user"
+      post: "/user/{id}"
+    };
+  };
+  rpc updateUser(User) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      patch: "/user/{id}/active/{active}"
+    };
+  };
+  rpc deleteUser(UserId) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/user/{id}"
+    };
+  };
+
+  rpc listUserGroups(UserId) returns (ListUserGroupsResponse) {
+    option (google.api.http) = {
+      get: "/user/{id}/groups"
+    };
+  };
+  rpc addGroup(AddGroupRequest) returns (GroupId) {
+    option (google.api.http) = {
+      post: "/group"
       body: "*"
     };
   };
-  rpc updateUser(User) returns (google.protobuf.Empty);
-  rpc deleteUser(UserId) returns (google.protobuf.Empty);
-
-  rpc addGroup(AddGroupRequest) returns (GroupId);
-  rpc listUserGroups(UserId) returns (ListUserGroupsResponse);
-  rpc updateGroup(Group) returns (google.protobuf.Empty);
-  rpc deleteGroup(GroupId) returns (google.protobuf.Empty);
+  rpc updateGroup(Group) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      patch: "/group/{id}"
+      body: "*"
+    };
+  };
+  rpc deleteGroup(GroupId) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/group/{id}"
+    };
+  };
 
   rpc addSource(AddSourceRequest) returns (SourceId);
   rpc listGroupSources(GroupId) returns (ListGroupSourcesResponse);

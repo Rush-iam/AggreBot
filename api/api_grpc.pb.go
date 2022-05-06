@@ -26,8 +26,8 @@ type NewsfeedConfiguratorClient interface {
 	AddUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*UserId, error)
 	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*empty.Empty, error)
 	DeleteUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*empty.Empty, error)
-	AddGroup(ctx context.Context, in *AddGroupRequest, opts ...grpc.CallOption) (*GroupId, error)
 	ListUserGroups(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*ListUserGroupsResponse, error)
+	AddGroup(ctx context.Context, in *AddGroupRequest, opts ...grpc.CallOption) (*GroupId, error)
 	UpdateGroup(ctx context.Context, in *Group, opts ...grpc.CallOption) (*empty.Empty, error)
 	DeleteGroup(ctx context.Context, in *GroupId, opts ...grpc.CallOption) (*empty.Empty, error)
 	AddSource(ctx context.Context, in *AddSourceRequest, opts ...grpc.CallOption) (*SourceId, error)
@@ -71,18 +71,18 @@ func (c *newsfeedConfiguratorClient) DeleteUser(ctx context.Context, in *UserId,
 	return out, nil
 }
 
-func (c *newsfeedConfiguratorClient) AddGroup(ctx context.Context, in *AddGroupRequest, opts ...grpc.CallOption) (*GroupId, error) {
-	out := new(GroupId)
-	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/addGroup", in, out, opts...)
+func (c *newsfeedConfiguratorClient) ListUserGroups(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*ListUserGroupsResponse, error) {
+	out := new(ListUserGroupsResponse)
+	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/listUserGroups", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *newsfeedConfiguratorClient) ListUserGroups(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*ListUserGroupsResponse, error) {
-	out := new(ListUserGroupsResponse)
-	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/listUserGroups", in, out, opts...)
+func (c *newsfeedConfiguratorClient) AddGroup(ctx context.Context, in *AddGroupRequest, opts ...grpc.CallOption) (*GroupId, error) {
+	out := new(GroupId)
+	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/addGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -150,8 +150,8 @@ type NewsfeedConfiguratorServer interface {
 	AddUser(context.Context, *UserId) (*UserId, error)
 	UpdateUser(context.Context, *User) (*empty.Empty, error)
 	DeleteUser(context.Context, *UserId) (*empty.Empty, error)
-	AddGroup(context.Context, *AddGroupRequest) (*GroupId, error)
 	ListUserGroups(context.Context, *UserId) (*ListUserGroupsResponse, error)
+	AddGroup(context.Context, *AddGroupRequest) (*GroupId, error)
 	UpdateGroup(context.Context, *Group) (*empty.Empty, error)
 	DeleteGroup(context.Context, *GroupId) (*empty.Empty, error)
 	AddSource(context.Context, *AddSourceRequest) (*SourceId, error)
@@ -174,11 +174,11 @@ func (UnimplementedNewsfeedConfiguratorServer) UpdateUser(context.Context, *User
 func (UnimplementedNewsfeedConfiguratorServer) DeleteUser(context.Context, *UserId) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
-func (UnimplementedNewsfeedConfiguratorServer) AddGroup(context.Context, *AddGroupRequest) (*GroupId, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddGroup not implemented")
-}
 func (UnimplementedNewsfeedConfiguratorServer) ListUserGroups(context.Context, *UserId) (*ListUserGroupsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserGroups not implemented")
+}
+func (UnimplementedNewsfeedConfiguratorServer) AddGroup(context.Context, *AddGroupRequest) (*GroupId, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddGroup not implemented")
 }
 func (UnimplementedNewsfeedConfiguratorServer) UpdateGroup(context.Context, *Group) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateGroup not implemented")
@@ -265,24 +265,6 @@ func _NewsfeedConfigurator_DeleteUser_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NewsfeedConfigurator_AddGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddGroupRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(NewsfeedConfiguratorServer).AddGroup(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/api.NewsfeedConfigurator/addGroup",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NewsfeedConfiguratorServer).AddGroup(ctx, req.(*AddGroupRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _NewsfeedConfigurator_ListUserGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserId)
 	if err := dec(in); err != nil {
@@ -297,6 +279,24 @@ func _NewsfeedConfigurator_ListUserGroups_Handler(srv interface{}, ctx context.C
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(NewsfeedConfiguratorServer).ListUserGroups(ctx, req.(*UserId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NewsfeedConfigurator_AddGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NewsfeedConfiguratorServer).AddGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.NewsfeedConfigurator/addGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NewsfeedConfiguratorServer).AddGroup(ctx, req.(*AddGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -429,12 +429,12 @@ var NewsfeedConfigurator_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _NewsfeedConfigurator_DeleteUser_Handler,
 		},
 		{
-			MethodName: "addGroup",
-			Handler:    _NewsfeedConfigurator_AddGroup_Handler,
-		},
-		{
 			MethodName: "listUserGroups",
 			Handler:    _NewsfeedConfigurator_ListUserGroups_Handler,
+		},
+		{
+			MethodName: "addGroup",
+			Handler:    _NewsfeedConfigurator_AddGroup_Handler,
 		},
 		{
 			MethodName: "updateGroup",
