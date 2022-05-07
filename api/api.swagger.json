@@ -16,7 +16,173 @@
     "application/json"
   ],
   "paths": {
+    "/source": {
+      "post": {
+        "operationId": "NewsfeedConfigurator_addSource",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiSourceId"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/apiAddSourceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "NewsfeedConfigurator"
+        ]
+      }
+    },
+    "/source/{id}": {
+      "get": {
+        "operationId": "NewsfeedConfigurator_getSource",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiSource"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "NewsfeedConfigurator"
+        ]
+      },
+      "delete": {
+        "operationId": "NewsfeedConfigurator_deleteSource",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "NewsfeedConfigurator"
+        ]
+      },
+      "patch": {
+        "operationId": "NewsfeedConfigurator_updateSource",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "active": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "NewsfeedConfigurator"
+        ]
+      }
+    },
     "/user/{id}": {
+      "get": {
+        "operationId": "NewsfeedConfigurator_getUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiUser"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "NewsfeedConfigurator"
+        ]
+      },
       "delete": {
         "operationId": "NewsfeedConfigurator_deleteUser",
         "responses": {
@@ -118,17 +284,59 @@
           "NewsfeedConfigurator"
         ]
       }
+    },
+    "/user/{id}/sources": {
+      "get": {
+        "operationId": "NewsfeedConfigurator_getUserSources",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiSources"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "NewsfeedConfigurator"
+        ]
+      }
     }
   },
   "definitions": {
-    "apiListUserSourcesResponse": {
+    "apiAddSourceRequest": {
       "type": "object",
       "properties": {
-        "sources": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/apiSource"
-          }
+        "userId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "refStr": {
+          "type": "string"
+        },
+        "refInt": {
+          "type": "string",
+          "format": "int64"
         }
       }
     },
@@ -175,6 +383,32 @@
         "id": {
           "type": "string",
           "format": "int64"
+        }
+      }
+    },
+    "apiSources": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/apiSource"
+          }
+        }
+      }
+    },
+    "apiUser": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "filter": {
+          "type": "string"
         }
       }
     },

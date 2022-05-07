@@ -35,7 +35,7 @@ func main() {
 func runGrpcServer() {
 	lis, err := net.Listen("tcp", grpcServerEndpoint)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Fatalf("Failed to listen: %v", err)
 	}
 	grpcServer := grpc.NewServer()
 	api.RegisterNewsfeedConfiguratorServer(grpcServer, handlers.Server{})
@@ -50,12 +50,13 @@ func runRestProxy() {
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithBlock(),
 	}
 	err := api.RegisterNewsfeedConfiguratorHandlerFromEndpoint(
 		ctx, mux, grpcServerEndpoint, opts,
 	)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Can't connect to gRPC server: %v", err)
 	}
 
 	log.Printf("Start serving REST proxy on %s...", restProxyEndpoint)

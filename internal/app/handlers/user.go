@@ -18,6 +18,16 @@ func (s Server) AddUser(_ context.Context, id *api.UserId) (*api.UserId, error) 
 	return id, err
 }
 
+func (s Server) GetUser(_ context.Context, id *api.UserId) (*api.User, error) {
+	user, err := db.GetUser(id)
+	if err != nil {
+		log.Print(err)
+	} else {
+		log.Printf("s.GetUser: <%+v>", id)
+	}
+	return user, err
+}
+
 func (s Server) UpdateUser(_ context.Context, user *api.User) (*empty.Empty, error) {
 	err := db.UpdateUser(user)
 	if err != nil {

@@ -35,7 +35,7 @@ func connect() {
 		if err != nil {
 			log.Printf("#%v: %v", retries, err)
 		} else {
-			log.Print("Connection to DB established")
+			log.Print("Database connection established")
 			return
 		}
 		time.Sleep(time.Second * time.Duration(retries))
@@ -47,7 +47,7 @@ func reconnectRoutine() {
 	for {
 		for err := db.conn.Ping(db.ctx); err != nil; pingRetries++ {
 			if pingRetries >= 3 {
-				log.Printf("Connection to DB lost!")
+				log.Printf("Database connection lost!")
 				Close()
 				connect()
 				break

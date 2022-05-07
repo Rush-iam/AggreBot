@@ -12,6 +12,11 @@ service NewsfeedConfigurator {
       post: "/user/{id}"
     };
   };
+  rpc getUser(UserId) returns (User) {
+    option (google.api.http) = {
+      get: "/user/{id}"
+    };
+  };
   rpc updateUser(User) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       patch: "/user/{id}/active/{active}"
@@ -23,16 +28,39 @@ service NewsfeedConfigurator {
     };
   };
 
-  rpc addSource(AddSourceRequest) returns (SourceId);
-  rpc listUserSources(UserId) returns (ListUserSourcesResponse);
-  rpc updateSource(UpdateSourceRequest) returns (google.protobuf.Empty);
-  rpc deleteSource(SourceId) returns (google.protobuf.Empty);
+  rpc addSource(AddSourceRequest) returns (SourceId) {
+    option (google.api.http) = {
+      post: "/source"
+      body: "*"
+    };
+  };
+  rpc getSource(SourceId) returns (Source) {
+    option (google.api.http) = {
+      get: "/source/{id}"
+    };
+  };
+  rpc getUserSources(UserId) returns (Sources) {
+    option (google.api.http) = {
+      get: "/user/{id}/sources"
+    };
+  };
+  rpc updateSource(UpdateSourceRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      patch: "/source/{id}"
+      body: "*"
+    };
+  };
+  rpc deleteSource(SourceId) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/source/{id}"
+    };
+  };
 }
 
 message User {
   int64 id = 1;
-  string filter = 2;
-  bool active = 3;
+  bool active = 2;
+  optional string filter = 3;
 }
 
 message Source {
@@ -47,16 +75,16 @@ message Source {
   int64 retry_count = 9;
 }
 
+message Sources {
+  repeated Source sources = 1;
+}
+
 message UserId {
   int64 id = 1;
 }
 
 message SourceId {
   int64 id = 1;
-}
-
-message ListUserSourcesResponse {
-  repeated Source sources = 1;
 }
 
 message AddSourceRequest {
@@ -68,7 +96,7 @@ message AddSourceRequest {
 }
 
 message UpdateSourceRequest {
-  int64 source_id = 1;
-  string name = 2;
-  bool active = 3;
+  int64 id = 1;
+  bool active = 2;
+  string name = 3;
 }
