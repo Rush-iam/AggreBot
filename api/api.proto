@@ -23,71 +23,23 @@ service NewsfeedConfigurator {
     };
   };
 
-  rpc listUserGroups(UserId) returns (ListUserGroupsResponse) {
-    option (google.api.http) = {
-      get: "/user/{id}/groups"
-    };
-  };
-  rpc addGroup(AddGroupRequest) returns (GroupId) {
-    option (google.api.http) = {
-      post: "/group"
-      body: "*"
-    };
-  };
-  rpc updateGroup(Group) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      patch: "/group/{id}"
-      body: "*"
-    };
-  };
-  rpc deleteGroup(GroupId) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      delete: "/group/{id}"
-    };
-  };
-
   rpc addSource(AddSourceRequest) returns (SourceId);
-  rpc listGroupSources(GroupId) returns (ListGroupSourcesResponse);
+  rpc listUserSources(UserId) returns (ListUserSourcesResponse);
   rpc updateSource(UpdateSourceRequest) returns (google.protobuf.Empty);
   rpc deleteSource(SourceId) returns (google.protobuf.Empty);
 }
 
-message UserId {
-  int64 id = 1;
-}
-
-message GroupId {
-  int64 id = 1;
-}
-
-message SourceId {
-  int64 id = 1;
-}
-
-/* Сущности:
-User - пользователь
-Group - группа источников
-Source - источник
- */
-
 message User {
   int64 id = 1;
-  bool active = 2;
-}
-
-message Group {
-  int64 id = 1;
-  int64 user_id = 2;
+  string filter = 2;
   bool active = 3;
-  string name = 4;
-  optional string filter = 5;
 }
 
 message Source {
   int64 id = 1;
-  int64 group_id = 2;
-  string name = 3;
-  bool active = 4;
+  int64 user_id = 2;
+  bool active = 3;
+  string name = 4;
   string type = 5;
   optional string ref_str = 6;
   optional int64 ref_int = 7;
@@ -95,33 +47,28 @@ message Source {
   int64 retry_count = 9;
 }
 
-message AddGroupRequest {
-  int64 user_id = 1;
-  string name = 2;
-  optional string filter = 3;
+message UserId {
+  int64 id = 1;
 }
 
-message ListUserGroupsResponse {
-  repeated Group groups = 1;
+message SourceId {
+  int64 id = 1;
 }
 
-message ListGroupSourcesResponse {
+message ListUserSourcesResponse {
   repeated Source sources = 1;
 }
 
 message AddSourceRequest {
-  int64 group_id = 1;
+  int64 user_id = 1;
   string name = 2;
   string type = 3;
-  optional string ref_str = 5;
-  optional int64 ref_int = 6;
+  optional string ref_str = 4;
+  optional int64 ref_int = 5;
 }
 
 message UpdateSourceRequest {
   int64 source_id = 1;
   string name = 2;
   bool active = 3;
-  string type = 4;
-  optional string ref_str = 5;
-  optional int64 ref_int = 6;
 }

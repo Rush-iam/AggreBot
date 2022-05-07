@@ -8,39 +8,37 @@ import (
 )
 
 func AddUser(id *api.UserId) error {
-	if isUserExists(id.Id) {
-		return status.Errorf(
-			codes.AlreadyExists,
-			fmt.Sprintf("db.AddUser: <%+v> already exists", id),
-		)
-	}
 	return addUserQuery(id)
 }
 
 func addUserQuery(id *api.UserId) error {
-	db.users[id.Id] = api.User{
-		Id:     id.Id,
-		Active: true,
+	commandTag, err := db.conn.Exec(db.ctx,
+		"INSERT INTO users VALUES ($1, $2) ON CONFLICT DO NOTHING", id.Id, true,
+	)
+	if err == nil && commandTag.RowsAffected() == 0 {
+		err = status.Errorf(
+			codes.AlreadyExists,
+			fmt.Sprintf("db.AddUser: <%+v> already exists", id),
+		)
 	}
-	return nil
+	return err
 }
 
 func UpdateUser(user *api.User) error {
-	if isUserExists(user.Id) == false {
-		return status.Errorf(
-			codes.NotFound,
-			fmt.Sprintf("db.UpdateUser: <%+v> not found", user),
-		)
-	}
 	return updateUserQuery(user)
 }
 
 func updateUserQuery(user *api.User) error {
-	db.users[user.Id] = api.User{
-		Id:     user.Id,
-		Active: user.Active,
+	commandTag, err := db.conn.Exec(db.ctx,
+		"UPDATE users SET active = $1 WHERE id = $2", user.Active, user.Id,
+	)
+	if err == nil && commandTag.RowsAffected() == 0 {
+		err = status.Errorf(
+			codes.NotFound,
+			fmt.Sprintf("db.UpdateUser: <%+v> not found", user),
+		)
 	}
-	return nil
+	return err
 }
 
 func DeleteUser(id *api.UserId) error {

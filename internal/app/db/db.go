@@ -1,21 +1,60 @@
 package db
 
 import (
-	"AggreBot/api"
+	"context"
+	"fmt"
+	"github.com/jackc/pgx/v4"
+	"log"
+	"time"
 )
 
-type dummyDB struct {
-	users         map[int64]api.User
-	groups        map[int64]api.Group
-	groupsCounter int64
-	sources       map[int64]api.Source
+var db struct {
+	url  string
+	ctx  context.Context
+	conn *pgx.Conn
 }
 
-var db dummyDB
+func Init(dbUser, dbPassword, dbHost, dbPort, dbName string) {
+	db.url = fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s", dbUser, dbPassword, dbHost, dbPort, dbName,
+	)
+	db.ctx = context.Background()
+	connect()
+	go reconnectRoutine()
+}
 
-func init() {
-	// connect to DB here
-	db.users = make(map[int64]api.User)
-	db.groups = make(map[int64]api.Group)
-	db.sources = make(map[int64]api.Source)
+func Close() {
+	_ = db.conn.Close(db.ctx)
+	db.conn = nil
+}
+
+func connect() {
+	var err error
+	for retries := 1; ; retries++ {
+		db.conn, err = pgx.Connect(db.ctx, db.url)
+		if err != nil {
+			log.Printf("#%v: %v", retries, err)
+		} else {
+			log.Print("Connection to DB established")
+			return
+		}
+		time.Sleep(time.Second * time.Duration(retries))
+	}
+}
+
+func reconnectRoutine() {
+	var pingRetries int
+	for {
+		for err := db.conn.Ping(db.ctx); err != nil; pingRetries++ {
+			if pingRetries >= 3 {
+				log.Printf("Connection to DB lost!")
+				Close()
+				connect()
+				break
+			}
+			time.Sleep(time.Second)
+		}
+		pingRetries = 0
+		time.Sleep(time.Second * 5)
+	}
 }

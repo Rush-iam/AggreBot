@@ -26,12 +26,8 @@ type NewsfeedConfiguratorClient interface {
 	AddUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*UserId, error)
 	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*empty.Empty, error)
 	DeleteUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*empty.Empty, error)
-	ListUserGroups(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*ListUserGroupsResponse, error)
-	AddGroup(ctx context.Context, in *AddGroupRequest, opts ...grpc.CallOption) (*GroupId, error)
-	UpdateGroup(ctx context.Context, in *Group, opts ...grpc.CallOption) (*empty.Empty, error)
-	DeleteGroup(ctx context.Context, in *GroupId, opts ...grpc.CallOption) (*empty.Empty, error)
 	AddSource(ctx context.Context, in *AddSourceRequest, opts ...grpc.CallOption) (*SourceId, error)
-	ListGroupSources(ctx context.Context, in *GroupId, opts ...grpc.CallOption) (*ListGroupSourcesResponse, error)
+	ListUserSources(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*ListUserSourcesResponse, error)
 	UpdateSource(ctx context.Context, in *UpdateSourceRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	DeleteSource(ctx context.Context, in *SourceId, opts ...grpc.CallOption) (*empty.Empty, error)
 }
@@ -71,42 +67,6 @@ func (c *newsfeedConfiguratorClient) DeleteUser(ctx context.Context, in *UserId,
 	return out, nil
 }
 
-func (c *newsfeedConfiguratorClient) ListUserGroups(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*ListUserGroupsResponse, error) {
-	out := new(ListUserGroupsResponse)
-	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/listUserGroups", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *newsfeedConfiguratorClient) AddGroup(ctx context.Context, in *AddGroupRequest, opts ...grpc.CallOption) (*GroupId, error) {
-	out := new(GroupId)
-	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/addGroup", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *newsfeedConfiguratorClient) UpdateGroup(ctx context.Context, in *Group, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/updateGroup", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *newsfeedConfiguratorClient) DeleteGroup(ctx context.Context, in *GroupId, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/deleteGroup", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *newsfeedConfiguratorClient) AddSource(ctx context.Context, in *AddSourceRequest, opts ...grpc.CallOption) (*SourceId, error) {
 	out := new(SourceId)
 	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/addSource", in, out, opts...)
@@ -116,9 +76,9 @@ func (c *newsfeedConfiguratorClient) AddSource(ctx context.Context, in *AddSourc
 	return out, nil
 }
 
-func (c *newsfeedConfiguratorClient) ListGroupSources(ctx context.Context, in *GroupId, opts ...grpc.CallOption) (*ListGroupSourcesResponse, error) {
-	out := new(ListGroupSourcesResponse)
-	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/listGroupSources", in, out, opts...)
+func (c *newsfeedConfiguratorClient) ListUserSources(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*ListUserSourcesResponse, error) {
+	out := new(ListUserSourcesResponse)
+	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/listUserSources", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -150,12 +110,8 @@ type NewsfeedConfiguratorServer interface {
 	AddUser(context.Context, *UserId) (*UserId, error)
 	UpdateUser(context.Context, *User) (*empty.Empty, error)
 	DeleteUser(context.Context, *UserId) (*empty.Empty, error)
-	ListUserGroups(context.Context, *UserId) (*ListUserGroupsResponse, error)
-	AddGroup(context.Context, *AddGroupRequest) (*GroupId, error)
-	UpdateGroup(context.Context, *Group) (*empty.Empty, error)
-	DeleteGroup(context.Context, *GroupId) (*empty.Empty, error)
 	AddSource(context.Context, *AddSourceRequest) (*SourceId, error)
-	ListGroupSources(context.Context, *GroupId) (*ListGroupSourcesResponse, error)
+	ListUserSources(context.Context, *UserId) (*ListUserSourcesResponse, error)
 	UpdateSource(context.Context, *UpdateSourceRequest) (*empty.Empty, error)
 	DeleteSource(context.Context, *SourceId) (*empty.Empty, error)
 	mustEmbedUnimplementedNewsfeedConfiguratorServer()
@@ -174,23 +130,11 @@ func (UnimplementedNewsfeedConfiguratorServer) UpdateUser(context.Context, *User
 func (UnimplementedNewsfeedConfiguratorServer) DeleteUser(context.Context, *UserId) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
-func (UnimplementedNewsfeedConfiguratorServer) ListUserGroups(context.Context, *UserId) (*ListUserGroupsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListUserGroups not implemented")
-}
-func (UnimplementedNewsfeedConfiguratorServer) AddGroup(context.Context, *AddGroupRequest) (*GroupId, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddGroup not implemented")
-}
-func (UnimplementedNewsfeedConfiguratorServer) UpdateGroup(context.Context, *Group) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateGroup not implemented")
-}
-func (UnimplementedNewsfeedConfiguratorServer) DeleteGroup(context.Context, *GroupId) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteGroup not implemented")
-}
 func (UnimplementedNewsfeedConfiguratorServer) AddSource(context.Context, *AddSourceRequest) (*SourceId, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddSource not implemented")
 }
-func (UnimplementedNewsfeedConfiguratorServer) ListGroupSources(context.Context, *GroupId) (*ListGroupSourcesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListGroupSources not implemented")
+func (UnimplementedNewsfeedConfiguratorServer) ListUserSources(context.Context, *UserId) (*ListUserSourcesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUserSources not implemented")
 }
 func (UnimplementedNewsfeedConfiguratorServer) UpdateSource(context.Context, *UpdateSourceRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateSource not implemented")
@@ -265,78 +209,6 @@ func _NewsfeedConfigurator_DeleteUser_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NewsfeedConfigurator_ListUserGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserId)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(NewsfeedConfiguratorServer).ListUserGroups(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/api.NewsfeedConfigurator/listUserGroups",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NewsfeedConfiguratorServer).ListUserGroups(ctx, req.(*UserId))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _NewsfeedConfigurator_AddGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddGroupRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(NewsfeedConfiguratorServer).AddGroup(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/api.NewsfeedConfigurator/addGroup",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NewsfeedConfiguratorServer).AddGroup(ctx, req.(*AddGroupRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _NewsfeedConfigurator_UpdateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Group)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(NewsfeedConfiguratorServer).UpdateGroup(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/api.NewsfeedConfigurator/updateGroup",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NewsfeedConfiguratorServer).UpdateGroup(ctx, req.(*Group))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _NewsfeedConfigurator_DeleteGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GroupId)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(NewsfeedConfiguratorServer).DeleteGroup(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/api.NewsfeedConfigurator/deleteGroup",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NewsfeedConfiguratorServer).DeleteGroup(ctx, req.(*GroupId))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _NewsfeedConfigurator_AddSource_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddSourceRequest)
 	if err := dec(in); err != nil {
@@ -355,20 +227,20 @@ func _NewsfeedConfigurator_AddSource_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NewsfeedConfigurator_ListGroupSources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GroupId)
+func _NewsfeedConfigurator_ListUserSources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserId)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NewsfeedConfiguratorServer).ListGroupSources(ctx, in)
+		return srv.(NewsfeedConfiguratorServer).ListUserSources(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.NewsfeedConfigurator/listGroupSources",
+		FullMethod: "/api.NewsfeedConfigurator/listUserSources",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NewsfeedConfiguratorServer).ListGroupSources(ctx, req.(*GroupId))
+		return srv.(NewsfeedConfiguratorServer).ListUserSources(ctx, req.(*UserId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -429,28 +301,12 @@ var NewsfeedConfigurator_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _NewsfeedConfigurator_DeleteUser_Handler,
 		},
 		{
-			MethodName: "listUserGroups",
-			Handler:    _NewsfeedConfigurator_ListUserGroups_Handler,
-		},
-		{
-			MethodName: "addGroup",
-			Handler:    _NewsfeedConfigurator_AddGroup_Handler,
-		},
-		{
-			MethodName: "updateGroup",
-			Handler:    _NewsfeedConfigurator_UpdateGroup_Handler,
-		},
-		{
-			MethodName: "deleteGroup",
-			Handler:    _NewsfeedConfigurator_DeleteGroup_Handler,
-		},
-		{
 			MethodName: "addSource",
 			Handler:    _NewsfeedConfigurator_AddSource_Handler,
 		},
 		{
-			MethodName: "listGroupSources",
-			Handler:    _NewsfeedConfigurator_ListGroupSources_Handler,
+			MethodName: "listUserSources",
+			Handler:    _NewsfeedConfigurator_ListUserSources_Handler,
 		},
 		{
 			MethodName: "updateSource",
