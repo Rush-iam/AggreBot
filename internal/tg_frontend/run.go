@@ -1,30 +1,44 @@
 package tg_frontend
 
 import (
-	"AggreBot/api"
+	"AggreBot/internal/tg_frontend/commands"
+	"AggreBot/internal/tg_frontend/tg_client"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 )
 
-func Run(grpc *api.NewsfeedConfiguratorClient, tg *tgbotapi.BotAPI, uLast int) {
-	uConfig := tgbotapi.NewUpdate(uLast)
+func RunBotLoop() {
+	uConfig := tgbotapi.NewUpdate(0)
 	uConfig.Timeout = 60
-	_ = grpc
 	for {
-		for u := range tg.GetUpdatesChan(uConfig) {
-			if u.Message != nil {
-				log.Printf("[%s] %s", u.Message.From.UserName, u.Message.Text)
-
-				msg := tgbotapi.NewMessage(u.Message.Chat.ID, u.Message.Text)
-				msg.ReplyToMessageID = u.Message.MessageID
-
-				_, err := tg.Send(msg)
-				if err != nil {
-					log.Print(err)
+		for u := range tg_client.Cl.GetUpdatesChan(uConfig) {
+			if u.Message != nil && u.Message.Chat.IsPrivate() {
+				replyText := handleMessage(u.Message)
+				if replyText != nil {
+					sendMessage(tg_client.Cl, u.Message.From.ID, replyText)
 				}
-			} else {
-				log.Print()
 			}
 		}
 	}
+}
+
+func handleMessage(msg *tgbotapi.Message) *string {
+	log.Printf("[%s] %s", msg.From.UserName, msg.Text)
+
+	if len(msg.Entities) > 0 {
+		cmd := commands.ParseFromMessage(msg)
+		if cmd != nil {
+			return cmd.Execute()
+		}
+	}
+	return nil
+}
+
+func sendMessage(tg *tgbotapi.BotAPI, userId int64, text *string) {
+	reply := tgbotapi.NewMessage(userId, *text)
+	_, err := tg.Send(reply)
+	if err != nil {
+		log.Print(err)
+	}
+	log.Printf("[bot] %s", *text)
 }
