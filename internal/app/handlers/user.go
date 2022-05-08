@@ -28,8 +28,8 @@ func (s Server) GetUser(_ context.Context, id *api.UserId) (*api.User, error) {
 	return user, err
 }
 
-func (s Server) UpdateUser(_ context.Context, user *api.User) (*empty.Empty, error) {
-	err := db.UpdateUser(user)
+func (s Server) UpdateUserFilter(_ context.Context, user *api.User) (*empty.Empty, error) {
+	err := db.UpdateUserFilter(user)
 	if err != nil {
 		log.Print(err)
 	} else {

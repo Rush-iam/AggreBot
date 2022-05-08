@@ -15,9 +15,9 @@ func AddSource(req *api.AddSourceRequest) (*api.SourceId, error) {
 func addSourceQuery(req *api.AddSourceRequest) (*api.SourceId, error) {
 	var id api.SourceId
 	err := db.conn.QueryRow(db.ctx,
-		"INSERT INTO sources (user_id, name, type, ref_str, ref_int)"+
-			"VALUES ($1, $2, $3, $4, $5) RETURNING id",
-		req.UserId, req.Name, req.Type, req.RefStr, req.RefInt,
+		"INSERT INTO sources (user_id, name, type, reference)"+
+			"VALUES ($1, $2, $3, $4) RETURNING id",
+		req.UserId, req.Name, req.Type, req.Reference,
 	).Scan(&id.Id)
 	return &id, err
 }
@@ -38,7 +38,7 @@ func getSourceQuery(id *api.SourceId) (*api.Source, error) {
 	err := db.conn.QueryRow(db.ctx,
 		"SELECT * from sources WHERE id = $1", id.Id,
 	).Scan(&source.Id, &source.UserId, &source.Name, &source.Type,
-		&source.RefStr, &source.RefInt, &source.LastChecked, &source.RetryCount)
+		&source.Reference, &source.LastChecked, &source.RetryCount)
 	if err != nil {
 		return nil, err
 	}
@@ -59,8 +59,7 @@ func getUserSourcesQuery(userId *api.UserId) (*api.Sources, error) {
 	for rows.Next() {
 		var source api.Source
 		err = rows.Scan(&source.Id, &source.UserId, &source.Name, &source.Type,
-			&source.RefStr, &source.RefInt, &source.LastChecked,
-			&source.RetryCount)
+			&source.Reference, &source.LastChecked, &source.RetryCount)
 		if err != nil {
 			return nil, err
 		}
@@ -69,8 +68,8 @@ func getUserSourcesQuery(userId *api.UserId) (*api.Sources, error) {
 	return &sources, nil
 }
 
-func UpdateSource(Source *api.UpdateSourceRequest) error {
-	rowsAffected, err := updateSourceQuery(Source)
+func UpdateSourceName(Source *api.UpdateSourceNameRequest) error {
+	rowsAffected, err := updateSourceNameQuery(Source)
 	if rowsAffected == 0 && err == nil {
 		err = status.Errorf(
 			codes.NotFound,
@@ -80,7 +79,7 @@ func UpdateSource(Source *api.UpdateSourceRequest) error {
 	return err
 }
 
-func updateSourceQuery(source *api.UpdateSourceRequest) (int64, error) {
+func updateSourceNameQuery(source *api.UpdateSourceNameRequest) (int64, error) {
 	cmdTag, err := db.conn.Exec(db.ctx,
 		"UPDATE sources SET name = $1 WHERE id = $2",
 		source.Name, source.Id,

@@ -11,8 +11,7 @@ CREATE TABLE sources (
     user_id bigint NOT NULL,
     name VARCHAR(255) NOT NULL,
     type VARCHAR(16) NOT NULL,
-    ref_str VARCHAR(1023),
-    ref_int bigint,
+    reference VARCHAR(1023),
     last_checked bigint DEFAULT EXTRACT(EPOCH FROM NOW()),
     retry_count smallint DEFAULT 0,
     CONSTRAINT fk_user

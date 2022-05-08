@@ -106,9 +106,11 @@
         "tags": [
           "NewsfeedConfigurator"
         ]
-      },
+      }
+    },
+    "/source/{id}/name/{name}": {
       "patch": {
-        "operationId": "NewsfeedConfigurator_updateSource",
+        "operationId": "NewsfeedConfigurator_updateSourceName",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -132,17 +134,10 @@
             "format": "int64"
           },
           {
-            "name": "body",
-            "in": "body",
+            "name": "name",
+            "in": "path",
             "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string"
-                }
-              }
-            }
+            "type": "string"
           }
         ],
         "tags": [
@@ -237,9 +232,11 @@
         "tags": [
           "NewsfeedConfigurator"
         ]
-      },
+      }
+    },
+    "/user/{id}/filter/{filter}": {
       "patch": {
-        "operationId": "NewsfeedConfigurator_updateUser",
+        "operationId": "NewsfeedConfigurator_updateUserFilter",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -263,17 +260,10 @@
             "format": "int64"
           },
           {
-            "name": "body",
-            "in": "body",
+            "name": "filter",
+            "in": "path",
             "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "filter": {
-                  "type": "string"
-                }
-              }
-            }
+            "type": "string"
           }
         ],
         "tags": [
@@ -327,12 +317,8 @@
         "type": {
           "type": "string"
         },
-        "refStr": {
+        "reference": {
           "type": "string"
-        },
-        "refInt": {
-          "type": "string",
-          "format": "int64"
         }
       }
     },
@@ -353,12 +339,8 @@
         "type": {
           "type": "string"
         },
-        "refStr": {
+        "reference": {
           "type": "string"
-        },
-        "refInt": {
-          "type": "string",
-          "format": "int64"
         },
         "lastChecked": {
           "type": "string",

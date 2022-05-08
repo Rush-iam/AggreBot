@@ -25,12 +25,12 @@ const _ = grpc.SupportPackageIsVersion7
 type NewsfeedConfiguratorClient interface {
 	AddUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*UserId, error)
 	GetUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*User, error)
-	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*empty.Empty, error)
+	UpdateUserFilter(ctx context.Context, in *User, opts ...grpc.CallOption) (*empty.Empty, error)
 	DeleteUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*empty.Empty, error)
 	AddSource(ctx context.Context, in *AddSourceRequest, opts ...grpc.CallOption) (*SourceId, error)
 	GetSource(ctx context.Context, in *SourceId, opts ...grpc.CallOption) (*Source, error)
 	GetUserSources(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*Sources, error)
-	UpdateSource(ctx context.Context, in *UpdateSourceRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	UpdateSourceName(ctx context.Context, in *UpdateSourceNameRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	DeleteSource(ctx context.Context, in *SourceId, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
@@ -60,9 +60,9 @@ func (c *newsfeedConfiguratorClient) GetUser(ctx context.Context, in *UserId, op
 	return out, nil
 }
 
-func (c *newsfeedConfiguratorClient) UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *newsfeedConfiguratorClient) UpdateUserFilter(ctx context.Context, in *User, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/updateUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/updateUserFilter", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -105,9 +105,9 @@ func (c *newsfeedConfiguratorClient) GetUserSources(ctx context.Context, in *Use
 	return out, nil
 }
 
-func (c *newsfeedConfiguratorClient) UpdateSource(ctx context.Context, in *UpdateSourceRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *newsfeedConfiguratorClient) UpdateSourceName(ctx context.Context, in *UpdateSourceNameRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/updateSource", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/updateSourceName", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -129,12 +129,12 @@ func (c *newsfeedConfiguratorClient) DeleteSource(ctx context.Context, in *Sourc
 type NewsfeedConfiguratorServer interface {
 	AddUser(context.Context, *UserId) (*UserId, error)
 	GetUser(context.Context, *UserId) (*User, error)
-	UpdateUser(context.Context, *User) (*empty.Empty, error)
+	UpdateUserFilter(context.Context, *User) (*empty.Empty, error)
 	DeleteUser(context.Context, *UserId) (*empty.Empty, error)
 	AddSource(context.Context, *AddSourceRequest) (*SourceId, error)
 	GetSource(context.Context, *SourceId) (*Source, error)
 	GetUserSources(context.Context, *UserId) (*Sources, error)
-	UpdateSource(context.Context, *UpdateSourceRequest) (*empty.Empty, error)
+	UpdateSourceName(context.Context, *UpdateSourceNameRequest) (*empty.Empty, error)
 	DeleteSource(context.Context, *SourceId) (*empty.Empty, error)
 	mustEmbedUnimplementedNewsfeedConfiguratorServer()
 }
@@ -149,8 +149,8 @@ func (UnimplementedNewsfeedConfiguratorServer) AddUser(context.Context, *UserId)
 func (UnimplementedNewsfeedConfiguratorServer) GetUser(context.Context, *UserId) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
-func (UnimplementedNewsfeedConfiguratorServer) UpdateUser(context.Context, *User) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+func (UnimplementedNewsfeedConfiguratorServer) UpdateUserFilter(context.Context, *User) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserFilter not implemented")
 }
 func (UnimplementedNewsfeedConfiguratorServer) DeleteUser(context.Context, *UserId) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
@@ -164,8 +164,8 @@ func (UnimplementedNewsfeedConfiguratorServer) GetSource(context.Context, *Sourc
 func (UnimplementedNewsfeedConfiguratorServer) GetUserSources(context.Context, *UserId) (*Sources, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserSources not implemented")
 }
-func (UnimplementedNewsfeedConfiguratorServer) UpdateSource(context.Context, *UpdateSourceRequest) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateSource not implemented")
+func (UnimplementedNewsfeedConfiguratorServer) UpdateSourceName(context.Context, *UpdateSourceNameRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateSourceName not implemented")
 }
 func (UnimplementedNewsfeedConfiguratorServer) DeleteSource(context.Context, *SourceId) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSource not implemented")
@@ -219,20 +219,20 @@ func _NewsfeedConfigurator_GetUser_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NewsfeedConfigurator_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _NewsfeedConfigurator_UpdateUserFilter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(User)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NewsfeedConfiguratorServer).UpdateUser(ctx, in)
+		return srv.(NewsfeedConfiguratorServer).UpdateUserFilter(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.NewsfeedConfigurator/updateUser",
+		FullMethod: "/api.NewsfeedConfigurator/updateUserFilter",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NewsfeedConfiguratorServer).UpdateUser(ctx, req.(*User))
+		return srv.(NewsfeedConfiguratorServer).UpdateUserFilter(ctx, req.(*User))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -309,20 +309,20 @@ func _NewsfeedConfigurator_GetUserSources_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NewsfeedConfigurator_UpdateSource_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateSourceRequest)
+func _NewsfeedConfigurator_UpdateSourceName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateSourceNameRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NewsfeedConfiguratorServer).UpdateSource(ctx, in)
+		return srv.(NewsfeedConfiguratorServer).UpdateSourceName(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.NewsfeedConfigurator/updateSource",
+		FullMethod: "/api.NewsfeedConfigurator/updateSourceName",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NewsfeedConfiguratorServer).UpdateSource(ctx, req.(*UpdateSourceRequest))
+		return srv.(NewsfeedConfiguratorServer).UpdateSourceName(ctx, req.(*UpdateSourceNameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -361,8 +361,8 @@ var NewsfeedConfigurator_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _NewsfeedConfigurator_GetUser_Handler,
 		},
 		{
-			MethodName: "updateUser",
-			Handler:    _NewsfeedConfigurator_UpdateUser_Handler,
+			MethodName: "updateUserFilter",
+			Handler:    _NewsfeedConfigurator_UpdateUserFilter_Handler,
 		},
 		{
 			MethodName: "deleteUser",
@@ -381,8 +381,8 @@ var NewsfeedConfigurator_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _NewsfeedConfigurator_GetUserSources_Handler,
 		},
 		{
-			MethodName: "updateSource",
-			Handler:    _NewsfeedConfigurator_UpdateSource_Handler,
+			MethodName: "updateSourceName",
+			Handler:    _NewsfeedConfigurator_UpdateSourceName_Handler,
 		},
 		{
 			MethodName: "deleteSource",

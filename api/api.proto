@@ -17,10 +17,9 @@ service NewsfeedConfigurator {
       get: "/user/{id}"
     };
   };
-  rpc updateUser(User) returns (google.protobuf.Empty) {
+  rpc updateUserFilter(User) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      patch: "/user/{id}"
-      body: "*"
+      patch: "/user/{id}/filter/{filter}"
     };
   };
   rpc deleteUser(UserId) returns (google.protobuf.Empty) {
@@ -45,10 +44,9 @@ service NewsfeedConfigurator {
       get: "/user/{id}/sources"
     };
   };
-  rpc updateSource(UpdateSourceRequest) returns (google.protobuf.Empty) {
+  rpc updateSourceName(UpdateSourceNameRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      patch: "/source/{id}"
-      body: "*"
+      patch: "/source/{id}/name/{name}"
     };
   };
   rpc deleteSource(SourceId) returns (google.protobuf.Empty) {
@@ -60,7 +58,7 @@ service NewsfeedConfigurator {
 
 message User {
   int64 id = 1;
-  optional string filter = 2;
+  string filter = 2;
 }
 
 message Source {
@@ -68,8 +66,7 @@ message Source {
   int64 user_id = 2;
   string name = 3;
   string type = 4;
-  optional string ref_str = 5;
-  optional int64 ref_int = 6;
+  string reference = 5;
   int64 last_checked = 7;
   int64 retry_count = 8;
 }
@@ -90,11 +87,10 @@ message AddSourceRequest {
   int64 user_id = 1;
   string name = 2;
   string type = 3;
-  optional string ref_str = 4;
-  optional int64 ref_int = 5;
+  string reference = 4;
 }
 
-message UpdateSourceRequest {
+message UpdateSourceNameRequest {
   int64 id = 1;
   string name = 2;
 }

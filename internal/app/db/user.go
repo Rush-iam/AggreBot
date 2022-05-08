@@ -48,8 +48,8 @@ func getUserQuery(id *api.UserId) (*api.User, error) {
 	return &user, err
 }
 
-func UpdateUser(user *api.User) error {
-	rowsAffected, err := updateUserQuery(user)
+func UpdateUserFilter(user *api.User) error {
+	rowsAffected, err := updateUserFilterQuery(user)
 	if rowsAffected == 0 && err == nil {
 		err = status.Errorf(
 			codes.NotFound,
@@ -59,7 +59,7 @@ func UpdateUser(user *api.User) error {
 	return err
 }
 
-func updateUserQuery(user *api.User) (int64, error) {
+func updateUserFilterQuery(user *api.User) (int64, error) {
 	cmdTag, err := db.conn.Exec(db.ctx,
 		"UPDATE users SET filter = $1 WHERE id = $2",
 		user.Filter, user.Id,

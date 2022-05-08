@@ -135,17 +135,9 @@ func local_request_NewsfeedConfigurator_GetUser_0(ctx context.Context, marshaler
 
 }
 
-func request_NewsfeedConfigurator_UpdateUser_0(ctx context.Context, marshaler runtime.Marshaler, client NewsfeedConfiguratorClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_NewsfeedConfigurator_UpdateUserFilter_0(ctx context.Context, marshaler runtime.Marshaler, client NewsfeedConfiguratorClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq User
 	var metadata runtime.ServerMetadata
-
-	newReader, berr := utilities.IOReaderFactory(req.Body)
-	if berr != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
-	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
 
 	var (
 		val string
@@ -164,22 +156,24 @@ func request_NewsfeedConfigurator_UpdateUser_0(ctx context.Context, marshaler ru
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
-	msg, err := client.UpdateUser(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	val, ok = pathParams["filter"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "filter")
+	}
+
+	protoReq.Filter, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "filter", err)
+	}
+
+	msg, err := client.UpdateUserFilter(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_NewsfeedConfigurator_UpdateUser_0(ctx context.Context, marshaler runtime.Marshaler, server NewsfeedConfiguratorServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_NewsfeedConfigurator_UpdateUserFilter_0(ctx context.Context, marshaler runtime.Marshaler, server NewsfeedConfiguratorServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq User
 	var metadata runtime.ServerMetadata
-
-	newReader, berr := utilities.IOReaderFactory(req.Body)
-	if berr != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
-	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
 
 	var (
 		val string
@@ -198,7 +192,17 @@ func local_request_NewsfeedConfigurator_UpdateUser_0(ctx context.Context, marsha
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
-	msg, err := server.UpdateUser(ctx, &protoReq)
+	val, ok = pathParams["filter"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "filter")
+	}
+
+	protoReq.Filter, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "filter", err)
+	}
+
+	msg, err := server.UpdateUserFilter(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -393,17 +397,9 @@ func local_request_NewsfeedConfigurator_GetUserSources_0(ctx context.Context, ma
 
 }
 
-func request_NewsfeedConfigurator_UpdateSource_0(ctx context.Context, marshaler runtime.Marshaler, client NewsfeedConfiguratorClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UpdateSourceRequest
+func request_NewsfeedConfigurator_UpdateSourceName_0(ctx context.Context, marshaler runtime.Marshaler, client NewsfeedConfiguratorClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UpdateSourceNameRequest
 	var metadata runtime.ServerMetadata
-
-	newReader, berr := utilities.IOReaderFactory(req.Body)
-	if berr != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
-	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
 
 	var (
 		val string
@@ -422,22 +418,24 @@ func request_NewsfeedConfigurator_UpdateSource_0(ctx context.Context, marshaler 
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
-	msg, err := client.UpdateSource(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	val, ok = pathParams["name"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
+	}
+
+	protoReq.Name, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
+	}
+
+	msg, err := client.UpdateSourceName(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_NewsfeedConfigurator_UpdateSource_0(ctx context.Context, marshaler runtime.Marshaler, server NewsfeedConfiguratorServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UpdateSourceRequest
+func local_request_NewsfeedConfigurator_UpdateSourceName_0(ctx context.Context, marshaler runtime.Marshaler, server NewsfeedConfiguratorServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UpdateSourceNameRequest
 	var metadata runtime.ServerMetadata
-
-	newReader, berr := utilities.IOReaderFactory(req.Body)
-	if berr != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
-	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
 
 	var (
 		val string
@@ -456,7 +454,17 @@ func local_request_NewsfeedConfigurator_UpdateSource_0(ctx context.Context, mars
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
-	msg, err := server.UpdateSource(ctx, &protoReq)
+	val, ok = pathParams["name"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
+	}
+
+	protoReq.Name, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
+	}
+
+	msg, err := server.UpdateSourceName(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -567,19 +575,19 @@ func RegisterNewsfeedConfiguratorHandlerServer(ctx context.Context, mux *runtime
 
 	})
 
-	mux.Handle("PATCH", pattern_NewsfeedConfigurator_UpdateUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PATCH", pattern_NewsfeedConfigurator_UpdateUserFilter_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/api.NewsfeedConfigurator/UpdateUser", runtime.WithHTTPPathPattern("/user/{id}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/api.NewsfeedConfigurator/UpdateUserFilter", runtime.WithHTTPPathPattern("/user/{id}/filter/{filter}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_NewsfeedConfigurator_UpdateUser_0(ctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_NewsfeedConfigurator_UpdateUserFilter_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -587,7 +595,7 @@ func RegisterNewsfeedConfiguratorHandlerServer(ctx context.Context, mux *runtime
 			return
 		}
 
-		forward_NewsfeedConfigurator_UpdateUser_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_NewsfeedConfigurator_UpdateUserFilter_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -687,19 +695,19 @@ func RegisterNewsfeedConfiguratorHandlerServer(ctx context.Context, mux *runtime
 
 	})
 
-	mux.Handle("PATCH", pattern_NewsfeedConfigurator_UpdateSource_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PATCH", pattern_NewsfeedConfigurator_UpdateSourceName_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/api.NewsfeedConfigurator/UpdateSource", runtime.WithHTTPPathPattern("/source/{id}"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/api.NewsfeedConfigurator/UpdateSourceName", runtime.WithHTTPPathPattern("/source/{id}/name/{name}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_NewsfeedConfigurator_UpdateSource_0(ctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_NewsfeedConfigurator_UpdateSourceName_0(ctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -707,7 +715,7 @@ func RegisterNewsfeedConfiguratorHandlerServer(ctx context.Context, mux *runtime
 			return
 		}
 
-		forward_NewsfeedConfigurator_UpdateSource_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_NewsfeedConfigurator_UpdateSourceName_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -818,24 +826,24 @@ func RegisterNewsfeedConfiguratorHandlerClient(ctx context.Context, mux *runtime
 
 	})
 
-	mux.Handle("PATCH", pattern_NewsfeedConfigurator_UpdateUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PATCH", pattern_NewsfeedConfigurator_UpdateUserFilter_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/api.NewsfeedConfigurator/UpdateUser", runtime.WithHTTPPathPattern("/user/{id}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/api.NewsfeedConfigurator/UpdateUserFilter", runtime.WithHTTPPathPattern("/user/{id}/filter/{filter}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_NewsfeedConfigurator_UpdateUser_0(ctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_NewsfeedConfigurator_UpdateUserFilter_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_NewsfeedConfigurator_UpdateUser_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_NewsfeedConfigurator_UpdateUserFilter_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -923,24 +931,24 @@ func RegisterNewsfeedConfiguratorHandlerClient(ctx context.Context, mux *runtime
 
 	})
 
-	mux.Handle("PATCH", pattern_NewsfeedConfigurator_UpdateSource_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PATCH", pattern_NewsfeedConfigurator_UpdateSourceName_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/api.NewsfeedConfigurator/UpdateSource", runtime.WithHTTPPathPattern("/source/{id}"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/api.NewsfeedConfigurator/UpdateSourceName", runtime.WithHTTPPathPattern("/source/{id}/name/{name}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_NewsfeedConfigurator_UpdateSource_0(ctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_NewsfeedConfigurator_UpdateSourceName_0(ctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_NewsfeedConfigurator_UpdateSource_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_NewsfeedConfigurator_UpdateSourceName_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -973,7 +981,7 @@ var (
 
 	pattern_NewsfeedConfigurator_GetUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"user", "id"}, ""))
 
-	pattern_NewsfeedConfigurator_UpdateUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"user", "id"}, ""))
+	pattern_NewsfeedConfigurator_UpdateUserFilter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 2}, []string{"user", "id", "filter"}, ""))
 
 	pattern_NewsfeedConfigurator_DeleteUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"user", "id"}, ""))
 
@@ -983,7 +991,7 @@ var (
 
 	pattern_NewsfeedConfigurator_GetUserSources_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"user", "id", "sources"}, ""))
 
-	pattern_NewsfeedConfigurator_UpdateSource_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"source", "id"}, ""))
+	pattern_NewsfeedConfigurator_UpdateSourceName_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 2}, []string{"source", "id", "name"}, ""))
 
 	pattern_NewsfeedConfigurator_DeleteSource_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"source", "id"}, ""))
 )
@@ -993,7 +1001,7 @@ var (
 
 	forward_NewsfeedConfigurator_GetUser_0 = runtime.ForwardResponseMessage
 
-	forward_NewsfeedConfigurator_UpdateUser_0 = runtime.ForwardResponseMessage
+	forward_NewsfeedConfigurator_UpdateUserFilter_0 = runtime.ForwardResponseMessage
 
 	forward_NewsfeedConfigurator_DeleteUser_0 = runtime.ForwardResponseMessage
 
@@ -1003,7 +1011,7 @@ var (
 
 	forward_NewsfeedConfigurator_GetUserSources_0 = runtime.ForwardResponseMessage
 
-	forward_NewsfeedConfigurator_UpdateSource_0 = runtime.ForwardResponseMessage
+	forward_NewsfeedConfigurator_UpdateSourceName_0 = runtime.ForwardResponseMessage
 
 	forward_NewsfeedConfigurator_DeleteSource_0 = runtime.ForwardResponseMessage
 )
