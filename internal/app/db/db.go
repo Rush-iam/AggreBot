@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
-	"github.com/jackc/pgx/v4"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"log"
 	"time"
 )
@@ -11,7 +11,7 @@ import (
 var db struct {
 	url  string
 	ctx  context.Context
-	conn *pgx.Conn
+	conn *pgxpool.Pool
 }
 
 func Init(dbUser, dbPassword, dbHost, dbPort, dbName string) {
@@ -19,42 +19,24 @@ func Init(dbUser, dbPassword, dbHost, dbPort, dbName string) {
 		"postgres://%s:%s@%s:%s/%s", dbUser, dbPassword, dbHost, dbPort, dbName,
 	)
 	db.ctx = context.Background()
-	connect()
-	go reconnectRoutine()
+	db.conn = connectWithRetries(db.ctx, db.url)
 }
 
 func Close() {
-	_ = db.conn.Close(db.ctx)
+	db.conn.Close()
+	db.ctx = nil
 	db.conn = nil
 }
 
-func connect() {
-	var err error
+func connectWithRetries(ctx context.Context, url string) *pgxpool.Pool {
 	for retries := 1; ; retries++ {
-		db.conn, err = pgx.Connect(db.ctx, db.url)
+		conn, err := pgxpool.Connect(ctx, url)
 		if err != nil {
 			log.Printf("#%v: %v", retries, err)
 		} else {
 			log.Print("Database connection established")
-			return
+			return conn
 		}
 		time.Sleep(time.Second * time.Duration(retries))
-	}
-}
-
-func reconnectRoutine() {
-	var pingRetries int
-	for {
-		for err := db.conn.Ping(db.ctx); err != nil; pingRetries++ {
-			if pingRetries >= 3 {
-				log.Printf("Database connection lost!")
-				Close()
-				connect()
-				break
-			}
-			time.Sleep(time.Second)
-		}
-		pingRetries = 0
-		time.Sleep(time.Second * 5)
 	}
 }

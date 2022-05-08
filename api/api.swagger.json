@@ -138,9 +138,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "active": {
-                  "type": "boolean"
-                },
                 "name": {
                   "type": "string"
                 }
@@ -240,9 +237,7 @@
         "tags": [
           "NewsfeedConfigurator"
         ]
-      }
-    },
-    "/user/{id}/active/{active}": {
+      },
       "patch": {
         "operationId": "NewsfeedConfigurator_updateUser",
         "responses": {
@@ -268,16 +263,17 @@
             "format": "int64"
           },
           {
-            "name": "active",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "boolean"
-          },
-          {
-            "name": "filter",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "schema": {
+              "type": "object",
+              "properties": {
+                "filter": {
+                  "type": "string"
+                }
+              }
+            }
           }
         ],
         "tags": [
@@ -351,9 +347,6 @@
           "type": "string",
           "format": "int64"
         },
-        "active": {
-          "type": "boolean"
-        },
         "name": {
           "type": "string"
         },
@@ -403,9 +396,6 @@
         "id": {
           "type": "string",
           "format": "int64"
-        },
-        "active": {
-          "type": "boolean"
         },
         "filter": {
           "type": "string"

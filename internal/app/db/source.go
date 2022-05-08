@@ -37,9 +37,8 @@ func getSourceQuery(id *api.SourceId) (*api.Source, error) {
 	var source api.Source
 	err := db.conn.QueryRow(db.ctx,
 		"SELECT * from sources WHERE id = $1", id.Id,
-	).Scan(&source.Id, &source.UserId, &source.Active, &source.Name,
-		&source.Type, &source.RefStr, &source.RefInt, &source.LastChecked,
-		&source.RetryCount)
+	).Scan(&source.Id, &source.UserId, &source.Name, &source.Type,
+		&source.RefStr, &source.RefInt, &source.LastChecked, &source.RetryCount)
 	if err != nil {
 		return nil, err
 	}
@@ -58,14 +57,14 @@ func getUserSourcesQuery(userId *api.UserId) (*api.Sources, error) {
 	)
 	defer rows.Close()
 	for rows.Next() {
-		var s api.Source
-		err = rows.Scan(&s.Id, &s.UserId, &s.Active, &s.Name,
-			&s.Type, &s.RefStr, &s.RefInt, &s.LastChecked,
-			&s.RetryCount)
+		var source api.Source
+		err = rows.Scan(&source.Id, &source.UserId, &source.Name, &source.Type,
+			&source.RefStr, &source.RefInt, &source.LastChecked,
+			&source.RetryCount)
 		if err != nil {
 			return nil, err
 		}
-		sources.Sources = append(sources.Sources, &s)
+		sources.Sources = append(sources.Sources, &source)
 	}
 	return &sources, nil
 }
@@ -83,8 +82,8 @@ func UpdateSource(Source *api.UpdateSourceRequest) error {
 
 func updateSourceQuery(source *api.UpdateSourceRequest) (int64, error) {
 	cmdTag, err := db.conn.Exec(db.ctx,
-		"UPDATE sources SET active = $1, name = $2 WHERE id = $3",
-		source.Active, source.Name, source.Id,
+		"UPDATE sources SET name = $1 WHERE id = $2",
+		source.Name, source.Id,
 	)
 	return cmdTag.RowsAffected(), err
 }

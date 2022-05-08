@@ -3,14 +3,12 @@
 
 CREATE TABLE users (
     id bigint NOT NULL PRIMARY KEY,
-    active bool DEFAULT true,
     filter VARCHAR(255)
 );
 
 CREATE TABLE sources (
     id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id bigint NOT NULL,
-    active bool NOT NULL DEFAULT true,
     name VARCHAR(255) NOT NULL,
     type VARCHAR(16) NOT NULL,
     ref_str VARCHAR(1023),

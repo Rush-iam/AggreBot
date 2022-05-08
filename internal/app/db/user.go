@@ -41,7 +41,7 @@ func getUserQuery(id *api.UserId) (*api.User, error) {
 	var user api.User
 	err := db.conn.QueryRow(db.ctx,
 		"SELECT * from users WHERE id = $1", id.Id,
-	).Scan(&user.Id, &user.Active, &user.Filter)
+	).Scan(&user.Id, &user.Filter)
 	if err != nil {
 		return nil, err
 	}
@@ -61,8 +61,8 @@ func UpdateUser(user *api.User) error {
 
 func updateUserQuery(user *api.User) (int64, error) {
 	cmdTag, err := db.conn.Exec(db.ctx,
-		"UPDATE users SET active = $1, filter = $2 WHERE id = $3",
-		user.Active, user.Filter, user.Id,
+		"UPDATE users SET filter = $1 WHERE id = $2",
+		user.Filter, user.Id,
 	)
 	return cmdTag.RowsAffected(), err
 }
