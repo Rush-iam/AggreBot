@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func list(c Command) *string {
+func cmdList(c Command) *string {
 	var reply string
 	userFilter, sources, ok := fetchUserFilterAndSources(c.userId)
 	if !ok {

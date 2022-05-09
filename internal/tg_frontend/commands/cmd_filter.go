@@ -8,7 +8,7 @@ import (
 	"regexp"
 )
 
-func filter(c Command) *string {
+func cmdFilter(c Command) *string {
 	var reply string
 	var userFilter string
 	if len(c.args) == 0 {

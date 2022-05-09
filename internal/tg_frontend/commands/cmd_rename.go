@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func rename(c Command) *string {
+func cmdRename(c Command) *string {
 	var reply string
 	sources, ok := fetchUserSources(c.userId)
 	if !ok {

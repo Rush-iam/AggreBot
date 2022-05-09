@@ -9,7 +9,7 @@ import (
 	"log"
 )
 
-func add(c Command) *string {
+func cmdAdd(c Command) *string {
 	var reply string
 	if len(c.args) == 0 {
 		reply = "👉 Hey! You forgot source URL"

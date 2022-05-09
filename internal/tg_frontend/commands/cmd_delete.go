@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func delete(c Command) *string {
+func cmdDelete(c Command) *string {
 	var reply string
 	sources, ok := fetchUserSources(c.userId)
 	if !ok {

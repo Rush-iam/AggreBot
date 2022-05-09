@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func start(c Command) *string {
+func cmdStart(c Command) *string {
 	var reply string
 	_, err := grpc_client.Cl.AddUser(
 		context.Background(),

@@ -14,12 +14,12 @@ type Command struct {
 type commandHandler func(Command) *string
 
 var commandsMap = map[string]commandHandler{
-	"/start":  start,
-	"/add":    add,
-	"/list":   list,
-	"/filter": filter,
-	"/delete": delete,
-	"/rename": rename,
+	"/start":  cmdStart,
+	"/add":    cmdAdd,
+	"/list":   cmdList,
+	"/filter": cmdFilter,
+	"/delete": cmdDelete,
+	"/rename": cmdRename,
 }
 
 func (c Command) Execute() *string {
