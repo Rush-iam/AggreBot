@@ -3,15 +3,15 @@
 
 CREATE TABLE users (
     id bigint NOT NULL PRIMARY KEY,
-    filter VARCHAR(255)
+    filter varchar(256) NOT NULL DEFAULT ''
 );
 
 CREATE TABLE sources (
     id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id bigint NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    type VARCHAR(16) NOT NULL,
-    reference VARCHAR(1023),
+    name varchar(256) NOT NULL,
+    url varchar(2048) NOT NULL,
+    is_active bool DEFAULT TRUE,
     last_checked bigint DEFAULT EXTRACT(EPOCH FROM NOW()),
     retry_count smallint DEFAULT 0,
     CONSTRAINT fk_user

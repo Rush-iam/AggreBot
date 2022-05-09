@@ -38,12 +38,12 @@ func (s Server) GetUserSources(_ context.Context, userId *api.UserId) (*api.Sour
 	return sources, err
 }
 
-func (s Server) UpdateSourceName(_ context.Context, source *api.UpdateSourceNameRequest) (*empty.Empty, error) {
-	err := db.UpdateSourceName(source)
+func (s Server) UpdateSourceName(_ context.Context, req *api.UpdateSourceNameRequest) (*empty.Empty, error) {
+	err := db.UpdateSourceName(req)
 	if err != nil {
 		log.Print(err)
 	} else {
-		log.Printf("s.UpdateSource: <%+v>", source)
+		log.Printf("s.UpdateSource: <%+v>", req)
 	}
 	return &empty.Empty{}, err
 }

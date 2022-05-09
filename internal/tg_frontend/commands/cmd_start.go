@@ -15,7 +15,7 @@ func start(c Command) *string {
 		&api.UserId{Id: c.userId},
 	)
 	if err != nil && status.Code(err) != codes.AlreadyExists {
-		reply = "Oops. Internal Error. Please try again later."
+		reply = "⚠ Oops. Internal Error. Please try again later."
 	} else {
 		reply = "🤖"
 	}

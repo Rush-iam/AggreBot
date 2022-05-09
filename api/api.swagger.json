@@ -314,10 +314,7 @@
         "name": {
           "type": "string"
         },
-        "type": {
-          "type": "string"
-        },
-        "reference": {
+        "url": {
           "type": "string"
         }
       }
@@ -336,11 +333,11 @@
         "name": {
           "type": "string"
         },
-        "type": {
+        "url": {
           "type": "string"
         },
-        "reference": {
-          "type": "string"
+        "isActive": {
+          "type": "boolean"
         },
         "lastChecked": {
           "type": "string",

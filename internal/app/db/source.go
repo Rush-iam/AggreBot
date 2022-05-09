@@ -14,10 +14,14 @@ func AddSource(req *api.AddSourceRequest) (*api.SourceId, error) {
 
 func addSourceQuery(req *api.AddSourceRequest) (*api.SourceId, error) {
 	var id api.SourceId
+	name := []rune(req.Name)
+	if len(name) > 256 {
+		name = name[:256]
+	}
 	err := db.conn.QueryRow(db.ctx,
-		"INSERT INTO sources (user_id, name, type, reference)"+
-			"VALUES ($1, $2, $3, $4) RETURNING id",
-		req.UserId, req.Name, req.Type, req.Reference,
+		"INSERT INTO sources (user_id, name, url)"+
+			"VALUES ($1, $2, $3) RETURNING id",
+		req.UserId, string(name), req.Url,
 	).Scan(&id.Id)
 	return &id, err
 }
@@ -37,8 +41,8 @@ func getSourceQuery(id *api.SourceId) (*api.Source, error) {
 	var source api.Source
 	err := db.conn.QueryRow(db.ctx,
 		"SELECT * from sources WHERE id = $1", id.Id,
-	).Scan(&source.Id, &source.UserId, &source.Name, &source.Type,
-		&source.Reference, &source.LastChecked, &source.RetryCount)
+	).Scan(&source.Id, &source.UserId, &source.Name, &source.Url,
+		&source.IsActive, &source.LastChecked, &source.RetryCount)
 	if err != nil {
 		return nil, err
 	}
@@ -53,13 +57,13 @@ func GetUserSources(userId *api.UserId) (*api.Sources, error) {
 func getUserSourcesQuery(userId *api.UserId) (*api.Sources, error) {
 	var sources api.Sources
 	rows, err := db.conn.Query(db.ctx,
-		"SELECT * from sources WHERE user_id = $1", userId.Id,
+		"SELECT * from sources WHERE user_id = $1 ORDER BY id", userId.Id,
 	)
 	defer rows.Close()
 	for rows.Next() {
 		var source api.Source
-		err = rows.Scan(&source.Id, &source.UserId, &source.Name, &source.Type,
-			&source.Reference, &source.LastChecked, &source.RetryCount)
+		err = rows.Scan(&source.Id, &source.UserId, &source.Name, &source.Url,
+			&source.IsActive, &source.LastChecked, &source.RetryCount)
 		if err != nil {
 			return nil, err
 		}
@@ -68,21 +72,25 @@ func getUserSourcesQuery(userId *api.UserId) (*api.Sources, error) {
 	return &sources, nil
 }
 
-func UpdateSourceName(Source *api.UpdateSourceNameRequest) error {
-	rowsAffected, err := updateSourceNameQuery(Source)
+func UpdateSourceName(req *api.UpdateSourceNameRequest) error {
+	rowsAffected, err := updateSourceNameQuery(req)
 	if rowsAffected == 0 && err == nil {
 		err = status.Errorf(
 			codes.NotFound,
-			fmt.Sprintf("db.UpdateSource: <%+v> not found", Source),
+			fmt.Sprintf("db.UpdateSource: <%+v> not found", req),
 		)
 	}
 	return err
 }
 
-func updateSourceNameQuery(source *api.UpdateSourceNameRequest) (int64, error) {
+func updateSourceNameQuery(req *api.UpdateSourceNameRequest) (int64, error) {
+	name := []rune(req.Name)
+	if len(name) > 256 {
+		name = name[:256]
+	}
 	cmdTag, err := db.conn.Exec(db.ctx,
 		"UPDATE sources SET name = $1 WHERE id = $2",
-		source.Name, source.Id,
+		string(name), req.Id,
 	)
 	return cmdTag.RowsAffected(), err
 }
