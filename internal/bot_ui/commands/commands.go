@@ -18,8 +18,9 @@ var commandsMap = map[string]commandHandler{
 	"/add":    cmdAdd,
 	"/list":   cmdList,
 	"/filter": cmdFilter,
-	"/delete": cmdDelete,
 	"/rename": cmdRename,
+	"/toggle": cmdToggle,
+	"/delete": cmdDelete,
 }
 
 func (c Command) Execute() *string {

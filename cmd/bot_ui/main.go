@@ -1,9 +1,9 @@
 package main
 
 import (
-	"AggreBot/internal/tg_frontend"
-	"AggreBot/internal/tg_frontend/grpc_client"
-	"AggreBot/internal/tg_frontend/tg_client"
+	"AggreBot/internal/bot_ui"
+	"AggreBot/internal/bot_ui/grpc_client"
+	"AggreBot/internal/bot_ui/tg_client"
 )
 
 const grpcServerEndpoint = "localhost:8080"
@@ -15,5 +15,5 @@ func main() {
 
 	tg_client.Init(tgToken)
 
-	tg_frontend.RunBotLoop()
+	bot_ui.RunBotLoop()
 }

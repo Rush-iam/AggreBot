@@ -1,0 +1,5 @@
+package courier
+
+func Sender() {
+
+}

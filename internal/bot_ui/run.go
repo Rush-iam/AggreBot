@@ -1,8 +1,8 @@
-package tg_frontend
+package bot_ui
 
 import (
-	"AggreBot/internal/tg_frontend/commands"
-	"AggreBot/internal/tg_frontend/tg_client"
+	"AggreBot/internal/bot_ui/commands"
+	"AggreBot/internal/bot_ui/tg_client"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 )
@@ -31,7 +31,8 @@ func handleMessage(msg *tgbotapi.Message) *string {
 			return cmd.Execute()
 		}
 	}
-	return nil
+	help := "👇 Use commands from Menu"
+	return &help
 }
 
 func sendMessage(tg *tgbotapi.BotAPI, userId int64, text *string) {

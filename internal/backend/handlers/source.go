@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"AggreBot/api"
-	"AggreBot/internal/app/db"
+	"AggreBot/internal/backend/db"
 	"context"
 	"github.com/golang/protobuf/ptypes/empty"
 	"log"
@@ -46,6 +46,16 @@ func (s Server) UpdateSourceName(_ context.Context, req *api.UpdateSourceNameReq
 		log.Printf("s.UpdateSource: <%+v>", req)
 	}
 	return &empty.Empty{}, err
+}
+
+func (s Server) UpdateSourceToggleActive(_ context.Context, id *api.SourceId) (*api.SourceToggleActiveResponse, error) {
+	source, err := db.UpdateSourceToggleActive(id)
+	if err != nil {
+		log.Print(err)
+	} else {
+		log.Printf("s.UpdateSourceToggleActive: <%+v>", id)
+	}
+	return source, err
 }
 
 func (s Server) DeleteSource(_ context.Context, id *api.SourceId) (*empty.Empty, error) {

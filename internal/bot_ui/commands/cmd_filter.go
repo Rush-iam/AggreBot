@@ -2,7 +2,7 @@ package commands
 
 import (
 	"AggreBot/api"
-	"AggreBot/internal/tg_frontend/grpc_client"
+	"AggreBot/internal/bot_ui/grpc_client"
 	"context"
 	"fmt"
 	"regexp"
@@ -36,12 +36,12 @@ func cmdFilter(c Command) *string {
 	)
 	if err != nil {
 		reply = "⚠ Oops. Internal Error. Please try again later."
+		return &reply
+	}
+	if userFilter == "" {
+		reply = "🔍 No Filter set"
 	} else {
-		if userFilter == "" {
-			reply = "🔍 No Filter set"
-		} else {
-			reply = fmt.Sprintf("🔍 RegExp Filter: '%s'", userFilter)
-		}
+		reply = fmt.Sprintf("🔍 RegExp Filter: '%s'", userFilter)
 	}
 	return &reply
 }

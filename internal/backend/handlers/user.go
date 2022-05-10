@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"AggreBot/api"
-	"AggreBot/internal/app/db"
+	"AggreBot/internal/backend/db"
 	"context"
 	"github.com/golang/protobuf/ptypes/empty"
 	"log"

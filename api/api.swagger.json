@@ -145,6 +145,37 @@
         ]
       }
     },
+    "/source/{id}/toggle_active": {
+      "patch": {
+        "operationId": "NewsfeedConfigurator_updateSourceToggleActive",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiSourceToggleActiveResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "NewsfeedConfigurator"
+        ]
+      }
+    },
     "/user/{id}": {
       "get": {
         "operationId": "NewsfeedConfigurator_getUser",
@@ -355,6 +386,20 @@
         "id": {
           "type": "string",
           "format": "int64"
+        }
+      }
+    },
+    "apiSourceToggleActiveResponse": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "isActive": {
+          "type": "boolean"
         }
       }
     },

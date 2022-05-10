@@ -2,7 +2,7 @@ package commands
 
 import (
 	"AggreBot/api"
-	"AggreBot/internal/tg_frontend/grpc_client"
+	"AggreBot/internal/bot_ui/grpc_client"
 	"context"
 	"fmt"
 	"github.com/mmcdole/gofeed"

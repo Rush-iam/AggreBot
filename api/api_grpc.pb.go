@@ -31,6 +31,7 @@ type NewsfeedConfiguratorClient interface {
 	GetSource(ctx context.Context, in *SourceId, opts ...grpc.CallOption) (*Source, error)
 	GetUserSources(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*Sources, error)
 	UpdateSourceName(ctx context.Context, in *UpdateSourceNameRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	UpdateSourceToggleActive(ctx context.Context, in *SourceId, opts ...grpc.CallOption) (*SourceToggleActiveResponse, error)
 	DeleteSource(ctx context.Context, in *SourceId, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
@@ -114,6 +115,15 @@ func (c *newsfeedConfiguratorClient) UpdateSourceName(ctx context.Context, in *U
 	return out, nil
 }
 
+func (c *newsfeedConfiguratorClient) UpdateSourceToggleActive(ctx context.Context, in *SourceId, opts ...grpc.CallOption) (*SourceToggleActiveResponse, error) {
+	out := new(SourceToggleActiveResponse)
+	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/updateSourceToggleActive", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *newsfeedConfiguratorClient) DeleteSource(ctx context.Context, in *SourceId, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/api.NewsfeedConfigurator/deleteSource", in, out, opts...)
@@ -135,6 +145,7 @@ type NewsfeedConfiguratorServer interface {
 	GetSource(context.Context, *SourceId) (*Source, error)
 	GetUserSources(context.Context, *UserId) (*Sources, error)
 	UpdateSourceName(context.Context, *UpdateSourceNameRequest) (*empty.Empty, error)
+	UpdateSourceToggleActive(context.Context, *SourceId) (*SourceToggleActiveResponse, error)
 	DeleteSource(context.Context, *SourceId) (*empty.Empty, error)
 	mustEmbedUnimplementedNewsfeedConfiguratorServer()
 }
@@ -166,6 +177,9 @@ func (UnimplementedNewsfeedConfiguratorServer) GetUserSources(context.Context, *
 }
 func (UnimplementedNewsfeedConfiguratorServer) UpdateSourceName(context.Context, *UpdateSourceNameRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateSourceName not implemented")
+}
+func (UnimplementedNewsfeedConfiguratorServer) UpdateSourceToggleActive(context.Context, *SourceId) (*SourceToggleActiveResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateSourceToggleActive not implemented")
 }
 func (UnimplementedNewsfeedConfiguratorServer) DeleteSource(context.Context, *SourceId) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSource not implemented")
@@ -327,6 +341,24 @@ func _NewsfeedConfigurator_UpdateSourceName_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NewsfeedConfigurator_UpdateSourceToggleActive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SourceId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NewsfeedConfiguratorServer).UpdateSourceToggleActive(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.NewsfeedConfigurator/updateSourceToggleActive",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NewsfeedConfiguratorServer).UpdateSourceToggleActive(ctx, req.(*SourceId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _NewsfeedConfigurator_DeleteSource_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SourceId)
 	if err := dec(in); err != nil {
@@ -383,6 +415,10 @@ var NewsfeedConfigurator_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "updateSourceName",
 			Handler:    _NewsfeedConfigurator_UpdateSourceName_Handler,
+		},
+		{
+			MethodName: "updateSourceToggleActive",
+			Handler:    _NewsfeedConfigurator_UpdateSourceToggleActive_Handler,
 		},
 		{
 			MethodName: "deleteSource",

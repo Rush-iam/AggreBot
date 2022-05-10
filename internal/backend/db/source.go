@@ -23,7 +23,10 @@ func addSourceQuery(req *api.AddSourceRequest) (*api.SourceId, error) {
 			"VALUES ($1, $2, $3) RETURNING id",
 		req.UserId, string(name), req.Url,
 	).Scan(&id.Id)
-	return &id, err
+	if err != nil {
+		return nil, err
+	}
+	return &id, nil
 }
 
 func GetSource(id *api.SourceId) (*api.Source, error) {
@@ -46,7 +49,7 @@ func getSourceQuery(id *api.SourceId) (*api.Source, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &source, err
+	return &source, nil
 }
 
 func GetUserSources(userId *api.UserId) (*api.Sources, error) {
@@ -77,7 +80,7 @@ func UpdateSourceName(req *api.UpdateSourceNameRequest) error {
 	if rowsAffected == 0 && err == nil {
 		err = status.Errorf(
 			codes.NotFound,
-			fmt.Sprintf("db.UpdateSource: <%+v> not found", req),
+			fmt.Sprintf("db.UpdateSourceName: <%+v> not found", req),
 		)
 	}
 	return err
@@ -93,6 +96,30 @@ func updateSourceNameQuery(req *api.UpdateSourceNameRequest) (int64, error) {
 		string(name), req.Id,
 	)
 	return cmdTag.RowsAffected(), err
+}
+
+func UpdateSourceToggleActive(id *api.SourceId) (*api.SourceToggleActiveResponse, error) {
+	source, err := updateSourceToggleActiveQuery(id)
+	if err == pgx.ErrNoRows {
+		err = status.Errorf(
+			codes.NotFound,
+			fmt.Sprintf("db.UpdateSourceToggleActive: <%+v> not found", id),
+		)
+	}
+	return source, nil
+}
+
+func updateSourceToggleActiveQuery(id *api.SourceId) (*api.SourceToggleActiveResponse, error) {
+	var sourceInfo api.SourceToggleActiveResponse
+	err := db.conn.QueryRow(db.ctx,
+		"UPDATE sources SET is_active = NOT is_active WHERE id = $1 "+
+			"RETURNING name, url, is_active",
+		id.Id,
+	).Scan(&sourceInfo.Name, &sourceInfo.Url, &sourceInfo.IsActive)
+	if err != nil {
+		return nil, err
+	}
+	return &sourceInfo, nil
 }
 
 func DeleteSource(id *api.SourceId) error {

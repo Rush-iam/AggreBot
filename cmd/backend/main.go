@@ -2,8 +2,8 @@ package main
 
 import (
 	"AggreBot/api"
-	"AggreBot/internal/app/db"
-	"AggreBot/internal/app/handlers"
+	"AggreBot/internal/backend/db"
+	"AggreBot/internal/backend/handlers"
 	"context"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"

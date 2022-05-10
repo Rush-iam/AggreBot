@@ -1,17 +1,16 @@
-# AggreBot - Newsfeed Aggregator Telegram Bot
+# AggreBot - RSS Aggregator Telegram Bot
 
 ## Что это?
 **AggreBot** - бот для Telegram, формирующий персональную новостную ленту на
-основе различных источников (RSS/Atom фиды, Telegram каналы).
+основе различных RSS источников.
 
 
 ## Как им пользоваться?
 ### Простой способ
 Запустить бот в Telegram и следовать инструкциям.
-Через интерфейс можно настроить свою ленту:
-- добавить источник с возможным фильтром по ключевому слову (RegExp)
-- удалить источник
-- проверить статус чтения источников
+
+Через интерфейс можно настроить свою ленту - добавить/удалить источники и 
+настроить [RegExp](https://ru.wikipedia.org/wiki/Регулярные_выражения) фильтр.
 
 ### Для продвинутых пользователей
 С приложением можно общаться через HTTP API - запросами gRPC или REST 
@@ -24,62 +23,61 @@ _(прокси к gRPC)_.
 flowchart LR
 
 subgraph External
-    DIRECT{{Direct Access}}
+    DIRECT{{Direct Requests}}
     TGUSER{{Telegram User}}
-    TG{{Telegram API}}
-    RSS{{RSS API}}
+    RSS{{RSS Source}}
 end
 subgraph Docker Compose Application
-    subgraph UserAPI [UserAPI Service]
-        ENDPOINTS(REST/gRPC<br/>endpoints)
-        CONFIGURER((Newsfeed<br/>Configurator))
-    end
+        subgraph BOTSERVICE [Bot UI Service]
+            BOT>Telegram<br/>chat handling]
+        end
+        subgraph API [Backend API Service]
+          CONFIGURER((Sources<br/>Configurator))
+        end
     subgraph Database [Database Container]
         DB[(PostgreSQL)]
     end
-    subgraph Worker Service
-        POLLER((Poller))
-        SENDER((Sender))
+    subgraph Courier Service
+        READER[\Reader/]
+        SENDER[/Sender\]
     end
 end
 
-DIRECT  <-->|HTTP<br/>requests| ENDPOINTS
-TGUSER  <==>|UI| ENDPOINTS
-TG -.->|channels| POLLER
-RSS -.->|feeds| POLLER
+DIRECT  ---|gRPC / REST| CONFIGURER
+TGUSER  ===|config<br/>messages| BOT ---|gRPC| CONFIGURER---|SQL| DB
+RSS -.->|feeds| READER
 
-ENDPOINTS ---|API calls| CONFIGURER<-->|Get/Update Config| DB
-
-DB -->|Get user:source:timestamp| POLLER 
-POLLER -->|go queue| SENDER
-SENDER -->|Update timestamp| DB
-TGUSER <==>|Newsfeed| SENDER
+DB -->|GET<br/>user:source:timestamp| READER 
+READER -->|Go<br/>queue| SENDER
+SENDER -->|UPDATE<br/>timestamp| DB
+TGUSER ===|newsfeed<br/>messages| SENDER
 
 ```
-Приложение бота разворачивается через **Docker Compose** на трёх 
+Приложение бота разворачивается через **Docker Compose** на четырёх 
 контейнерах:
-1. UserAPI Service
-2. Worker Service
-3. Database Container
+1. Bot UI Service
+2. Backend API Service
+3. Courier Service
+4. Database Container
 
-#### UserAPI Service
-Имеет открытый HTTP порт, который принимает запросы через API gRPC/REST и 
-работает с базой данных, где хранит конфигурации пользователя (источники).
+#### Bot UI Service
+Обрабатывает сообщения/команды пользователей, транслируя запросы к
+Backend API через gRPC.
 
-Доступные методы:
-- **addSource** - добавить источник
-- **deleteSource** - удалить источник
-- **checkStatus** - проверить статус источников
+#### Backend API Service
+Имеет открытые HTTP порты, принимающие запросы через gRPC или REST _(прокси к 
+gRPC)_.
+Работает с базой данных, где хранит конфигурации пользователя (источники).
 
-#### Worker Service
+#### Courier Service
 Состоит из двух компонентов:
-- **Poller** - читает конфигурации пользователь-источник из БД и опрашивает 
-  источники. Новые записи отправляет в очередь для Sender.
+- **Reader** - читает пользовательские конфигурации из БД и обходит 
+  RSS источники. Новые записи передаёт для обработки к Sender.
 - **Sender** - рассылает новые записи пользователю (с учётом пользовательского 
-  фильтра), обновляя время последней новости в БД.
+  фильтра), обновляя время последней записи в БД.
 
 #### Database Container
-PostgreSQL. База данных хранится на host-машине.
+База данных PostgreSQL. Хранится на host-машине.
 
 ---
 _Артем **nGragas** Корников. Учебный проект для Ozon Route 256._
