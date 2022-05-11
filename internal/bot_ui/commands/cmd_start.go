@@ -5,13 +5,15 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (m *Manager) cmdStart(c *command) *string {
-	var reply string
+func cmdStartReply() string {
+	return "🤖"
+}
+
+func (m *Manager) cmdStart(c *command) string {
 	err := m.backend.AddUser(c.userId)
 	if err != nil && status.Code(err) != codes.AlreadyExists {
-		reply = "⚠ Oops. Internal Error. Please try again later."
-	} else {
-		reply = "🤖"
+		return errInternalError
 	}
-	return &reply
+
+	return cmdStartReply()
 }

@@ -2,7 +2,6 @@ package commands
 
 import (
 	"AggreBot/internal/pkg/api"
-	"fmt"
 	"strconv"
 )
 
@@ -14,32 +13,29 @@ func boolToEmoji(value bool) rune {
 	}
 }
 
-func (m *Manager) getSourceFromUserArg(userId int64, args []string) (*api.Source, *string) {
-	var replyError string
+func (m *Manager) getSourceFromUserArg(userId int64, args []string) (*api.Source, string) {
 	sources, err := m.backend.GetUserSources(userId)
 	if err != nil {
-		replyError = "⚠ Oops. Internal Error. Please try again later."
-		return nil, &replyError
+		return nil, errInternalError
 	}
+
 	if len(sources) == 0 {
-		replyError = "🤷 You didn't add any Sources"
-		return nil, &replyError
+		return nil, errNoAnySources
 	}
+
 	if len(args) == 0 {
-		replyError = "👉 Hey! You forgot # of Source"
-		return nil, &replyError
+		return nil, errNoSourceIndex
 	}
+
 	indexString := args[0]
 	index, err := strconv.Atoi(indexString)
 	if err != nil {
-		replyError = fmt.Sprintf(
-			"👉 Hey! Index of Source should be a number, not '%s'", indexString,
-		)
-		return nil, &replyError
+		return nil, errWrongSourceIndex
 	}
+
 	if index < 1 || len(sources) < index {
-		replyError = fmt.Sprintf("👉 Hey! There is no Source with #%d", index)
-		return nil, &replyError
+		return nil, errNoSuchSource
 	}
-	return sources[index-1], nil
+
+	return sources[index-1], ""
 }

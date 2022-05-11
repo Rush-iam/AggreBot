@@ -7,7 +7,7 @@ type Manager struct {
 	commandHandlers map[string]commandHandler
 }
 
-type commandHandler func(*command) *string
+type commandHandler func(*command) string
 
 func NewManager(grpcClient *grpc_client.Client) *Manager {
 	var m Manager
@@ -26,11 +26,12 @@ func NewManager(grpcClient *grpc_client.Client) *Manager {
 	return &m
 }
 
-func (m *Manager) Execute(c *command) *string {
+func (m *Manager) Execute(c *command) string {
 	cmdHandler, ok := m.commandHandlers[c.cmdName]
 	if ok {
-		return cmdHandler(c)
+		reply := cmdHandler(c)
+		return reply
 	} else {
-		return nil
+		return ""
 	}
 }

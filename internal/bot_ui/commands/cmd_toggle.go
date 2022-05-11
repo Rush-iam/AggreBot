@@ -2,19 +2,20 @@ package commands
 
 import "fmt"
 
-func (m *Manager) cmdToggle(c *command) *string {
-	var reply string
+func cmdToggleReply(sourceIsActive bool, sourceName string) string {
+	return fmt.Sprintf("%c %s", boolToEmoji(sourceIsActive), sourceName)
+}
 
+func (m *Manager) cmdToggle(c *command) string {
 	sourceToToggle, errReply := m.getSourceFromUserArg(c.userId, c.args)
-	if errReply != nil {
+	if errReply != "" {
 		return errReply
 	}
 
 	source, err := m.backend.UpdateSourceToggleActive(sourceToToggle.Id)
 	if err != nil {
-		reply = "⚠ Oops. Internal Error. Please try again later."
-		return &reply
+		return errInternalError
 	}
-	reply = fmt.Sprintf("%c %s", boolToEmoji(source.IsActive), source.Name)
-	return &reply
+
+	return cmdToggleReply(source.IsActive, source.Name)
 }

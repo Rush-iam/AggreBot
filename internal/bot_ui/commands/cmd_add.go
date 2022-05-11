@@ -6,30 +6,31 @@ import (
 	"log"
 )
 
-func (m *Manager) cmdAdd(c *command) *string {
-	var reply string
+func cmdAddReply(sourceName string) string {
+	return fmt.Sprintf("✅ %s", sourceName)
+}
+
+func (m *Manager) cmdAdd(c *command) string {
 	if len(c.args) == 0 {
-		reply = "👉 Hey! You forgot source URL"
-		return &reply
+		return errAddNoUrl
 	}
+
 	sourceUrl := c.args[0]
 	if len([]rune(sourceUrl)) > 2048 {
-		reply = "🤯 Oh! Your URL is too looong"
-		return &reply
+		return errAddUrlTooLong
 	}
+
 	sourceName, ok := getRssTitle(sourceUrl)
 	if !ok {
-		reply = "🤒 I had troubles parsing RSS from that URL, sorry"
-		return &reply
+		return errAddRssParseError
 	}
 
 	err := m.backend.AddSource(c.userId, sourceName, sourceUrl)
 	if err != nil {
-		reply = "⚠ Oops. Internal Error. Please try again later."
-	} else {
-		reply = fmt.Sprintf("✅ %s", sourceName)
+		return errInternalError
 	}
-	return &reply
+
+	return cmdAddReply(sourceName)
 }
 
 func getRssTitle(rawReference string) (string, bool) {

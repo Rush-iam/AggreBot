@@ -2,17 +2,20 @@ package commands
 
 import "fmt"
 
-func (m *Manager) cmdDelete(c *command) *string {
-	var reply string
+func cmdDeleteReply(sourceToDeleteName string) string {
+	return fmt.Sprintf("🗑 %s", sourceToDeleteName)
+}
+
+func (m *Manager) cmdDelete(c *command) string {
 	sourceToDelete, errReply := m.getSourceFromUserArg(c.userId, c.args)
-	if errReply != nil {
+	if errReply != "" {
 		return errReply
 	}
+
 	err := m.backend.DeleteSource(sourceToDelete.Id)
 	if err != nil {
-		reply = "⚠ Oops. Internal Error. Please try again later."
-		return &reply
+		return errInternalError
 	}
-	reply = fmt.Sprintf("🗑 %s", sourceToDelete.Name)
-	return &reply
+
+	return cmdDeleteReply(sourceToDelete.Name)
 }

@@ -1,26 +1,18 @@
 package commands
 
 import (
+	"AggreBot/internal/pkg/api"
 	"fmt"
 	"strings"
 )
 
-func (m *Manager) cmdList(c *command) *string {
-	var reply string
-	userFilter, err1 := m.backend.GetUserFilter(c.userId)
-	sources, err2 := m.backend.GetUserSources(c.userId)
-	if err1 != nil || err2 != nil {
-		reply = "⚠ Oops. Internal Error. Please try again later."
-		return &reply
+func cmdListReply(userFilter string, sources []*api.Source) string {
+	replyLines := make([]string, 0, len(sources)+2)
+
+	if userFilter != "" {
+		replyLines = append(replyLines, cmdFilterReply(userFilter))
 	}
 
-	var replyLines []string
-	if *userFilter != "" {
-		replyLines = append(
-			replyLines,
-			fmt.Sprintf("🔍 RegExp Filter: '%s'", userFilter),
-		)
-	}
 	if len(sources) == 0 {
 		replyLines = append(replyLines, "🗒 No sources. Try to add!")
 	} else {
@@ -33,6 +25,16 @@ func (m *Manager) cmdList(c *command) *string {
 			)
 		}
 	}
-	reply = strings.Join(replyLines, "\n")
-	return &reply
+
+	return strings.Join(replyLines, "\n")
+}
+
+func (m *Manager) cmdList(c *command) string {
+	userFilter, err1 := m.backend.GetUserFilter(c.userId)
+	sources, err2 := m.backend.GetUserSources(c.userId)
+	if err1 != nil || err2 != nil {
+		return errInternalError
+	}
+
+	return cmdListReply(*userFilter, sources)
 }

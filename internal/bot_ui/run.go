@@ -26,7 +26,7 @@ func (bot *Bot) RunBotLoop() {
 		for u := range bot.tgClient.GetUpdatesChan(uConfig) {
 			if u.Message != nil && u.Message.Chat.IsPrivate() {
 				replyText := bot.handleMessage(u.Message)
-				if replyText != nil {
+				if replyText != "" {
 					bot.sendMessage(u.Message.From.ID, replyText)
 				}
 			}
@@ -34,7 +34,7 @@ func (bot *Bot) RunBotLoop() {
 	}
 }
 
-func (bot *Bot) handleMessage(msg *tgbotapi.Message) *string {
+func (bot *Bot) handleMessage(msg *tgbotapi.Message) string {
 	log.Printf("[%s] %s", msg.From.UserName, msg.Text)
 
 	if len(msg.Entities) > 0 {
@@ -43,15 +43,14 @@ func (bot *Bot) handleMessage(msg *tgbotapi.Message) *string {
 			return bot.commandManager.Execute(command)
 		}
 	}
-	help := "👇 Use commands from Menu"
-	return &help
+	return commands.ErrHelp
 }
 
-func (bot *Bot) sendMessage(userId int64, text *string) {
-	reply := tgbotapi.NewMessage(userId, *text)
+func (bot *Bot) sendMessage(userId int64, text string) {
+	reply := tgbotapi.NewMessage(userId, text)
 	_, err := bot.tgClient.Send(reply)
 	if err != nil {
 		log.Print(err)
 	}
-	log.Printf("[bot] %s", *text)
+	log.Printf("[bot] %s", text)
 }
