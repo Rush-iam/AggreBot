@@ -5,13 +5,7 @@ import (
 	"log"
 )
 
-var Cl *tgbotapi.BotAPI
-
-func Init(token string) {
-	Cl = getTGClient(token)
-}
-
-func getTGClient(token string) *tgbotapi.BotAPI {
+func New(token string) *tgbotapi.BotAPI {
 	tgClient, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		log.Fatalf("Can't get TG client: %v", err)

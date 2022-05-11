@@ -1,9 +1,7 @@
 package commands
 
 import (
-	"AggreBot/api"
-	"AggreBot/internal/bot_ui/grpc_client"
-	"context"
+	"AggreBot/internal/pkg/api"
 	"fmt"
 	"strconv"
 )
@@ -16,15 +14,15 @@ func boolToEmoji(value bool) rune {
 	}
 }
 
-func fetchSourceFromUserArg(userId int64, args []string) (*api.Source, *string) {
+func (m *Manager) getSourceFromUserArg(userId int64, args []string) (*api.Source, *string) {
 	var replyError string
-	sources, ok := fetchUserSources(userId)
-	if !ok {
+	sources, err := m.backend.GetUserSources(userId)
+	if err != nil {
 		replyError = "⚠ Oops. Internal Error. Please try again later."
 		return nil, &replyError
 	}
 	if len(sources) == 0 {
-		replyError = "🤷 There is no any Sources"
+		replyError = "🤷 You didn't add any Sources"
 		return nil, &replyError
 	}
 	if len(args) == 0 {
@@ -44,26 +42,4 @@ func fetchSourceFromUserArg(userId int64, args []string) (*api.Source, *string) 
 		return nil, &replyError
 	}
 	return sources[index-1], nil
-}
-
-func fetchUserFilter(userId int64) (string, bool) {
-	responseUser, err := grpc_client.Cl.GetUser(
-		context.Background(),
-		&api.UserId{Id: userId},
-	)
-	if err != nil {
-		return "", false
-	}
-	return responseUser.Filter, true
-}
-
-func fetchUserSources(userId int64) ([]*api.Source, bool) {
-	responseSources, err := grpc_client.Cl.GetUserSources(
-		context.Background(),
-		&api.UserId{Id: userId},
-	)
-	if err != nil {
-		return nil, false
-	}
-	return responseSources.Sources, true
 }

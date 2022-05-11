@@ -1,19 +1,13 @@
 package commands
 
 import (
-	"AggreBot/api"
-	"AggreBot/internal/bot_ui/grpc_client"
-	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func cmdStart(c Command) *string {
+func (m *Manager) cmdStart(c *command) *string {
 	var reply string
-	_, err := grpc_client.Cl.AddUser(
-		context.Background(),
-		&api.UserId{Id: c.userId},
-	)
+	err := m.backend.AddUser(c.userId)
 	if err != nil && status.Code(err) != codes.AlreadyExists {
 		reply = "⚠ Oops. Internal Error. Please try again later."
 	} else {

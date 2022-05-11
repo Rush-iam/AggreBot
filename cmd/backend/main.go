@@ -1,9 +1,10 @@
 package main
 
 import (
-	"AggreBot/api"
-	"AggreBot/internal/backend/db"
-	"AggreBot/internal/backend/handlers"
+	"AggreBot/internal/backend"
+	"AggreBot/internal/pkg/api"
+	"AggreBot/internal/pkg/db_client"
+	"AggreBot/internal/pkg/exit_signal"
 	"context"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -25,23 +26,26 @@ const (
 )
 
 func main() {
-	db.Init(dbUser, dbPassword, dbHost, dbPort, dbName)
+	db := db_client.NewClient(
+		context.Background(), dbUser, dbPassword, dbHost, dbPort, dbName,
+	)
 	defer db.Close()
 
+	go runGrpcServer(db)
 	go runRestProxy()
-	runGrpcServer()
+
+	<-exit_signal.Wait()
 }
 
-func runGrpcServer() {
-	lis, err := net.Listen("tcp", grpcServerEndpoint)
+func runGrpcServer(db *db_client.Client) {
+	grpcServer := backend.NewServer(db)
+	listener, err := net.Listen("tcp", grpcServerEndpoint)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
-	grpcServer := grpc.NewServer()
-	api.RegisterNewsfeedConfiguratorServer(grpcServer, handlers.Server{})
 
 	log.Printf("Start serving gRPC on %s...", grpcServerEndpoint)
-	err = grpcServer.Serve(lis)
+	err = grpcServer.Serve(listener)
 	log.Fatal(err)
 }
 

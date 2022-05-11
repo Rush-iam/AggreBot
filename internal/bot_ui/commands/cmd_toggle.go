@@ -1,24 +1,16 @@
 package commands
 
-import (
-	"AggreBot/api"
-	"AggreBot/internal/bot_ui/grpc_client"
-	"context"
-	"fmt"
-)
+import "fmt"
 
-func cmdToggle(c Command) *string {
+func (m *Manager) cmdToggle(c *command) *string {
 	var reply string
 
-	sourceToToggle, errReply := fetchSourceFromUserArg(c.userId, c.args)
+	sourceToToggle, errReply := m.getSourceFromUserArg(c.userId, c.args)
 	if errReply != nil {
 		return errReply
 	}
 
-	source, err := grpc_client.Cl.UpdateSourceToggleActive(
-		context.Background(),
-		&api.SourceId{Id: sourceToToggle.Id},
-	)
+	source, err := m.backend.UpdateSourceToggleActive(sourceToToggle.Id)
 	if err != nil {
 		reply = "⚠ Oops. Internal Error. Please try again later."
 		return &reply

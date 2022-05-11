@@ -370,10 +370,6 @@
         "isActive": {
           "type": "boolean"
         },
-        "lastChecked": {
-          "type": "string",
-          "format": "int64"
-        },
         "retryCount": {
           "type": "string",
           "format": "int64"

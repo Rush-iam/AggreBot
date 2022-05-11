@@ -5,17 +5,17 @@ import (
 	"strings"
 )
 
-func cmdList(c Command) *string {
+func (m *Manager) cmdList(c *command) *string {
 	var reply string
-	userFilter, ok := fetchUserFilter(c.userId)
-	sources, ok2 := fetchUserSources(c.userId)
-	if !ok || !ok2 {
+	userFilter, err1 := m.backend.GetUserFilter(c.userId)
+	sources, err2 := m.backend.GetUserSources(c.userId)
+	if err1 != nil || err2 != nil {
 		reply = "⚠ Oops. Internal Error. Please try again later."
 		return &reply
 	}
 
 	var replyLines []string
-	if userFilter != "" {
+	if *userFilter != "" {
 		replyLines = append(
 			replyLines,
 			fmt.Sprintf("🔍 RegExp Filter: '%s'", userFilter),

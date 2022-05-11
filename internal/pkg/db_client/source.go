@@ -1,18 +1,18 @@
-package db
+package db_client
 
 import (
-	"AggreBot/api"
+	"AggreBot/internal/pkg/api"
 	"fmt"
 	"github.com/jackc/pgx/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func AddSource(req *api.AddSourceRequest) (*api.SourceId, error) {
-	return addSourceQuery(req)
+func (db *Client) AddSource(req *api.AddSourceRequest) (*api.SourceId, error) {
+	return db.addSourceQuery(req)
 }
 
-func addSourceQuery(req *api.AddSourceRequest) (*api.SourceId, error) {
+func (db *Client) addSourceQuery(req *api.AddSourceRequest) (*api.SourceId, error) {
 	var id api.SourceId
 	name := []rune(req.Name)
 	if len(name) > 256 {
@@ -29,8 +29,8 @@ func addSourceQuery(req *api.AddSourceRequest) (*api.SourceId, error) {
 	return &id, nil
 }
 
-func GetSource(id *api.SourceId) (*api.Source, error) {
-	source, err := getSourceQuery(id)
+func (db *Client) GetSource(id *api.SourceId) (*api.Source, error) {
+	source, err := db.getSourceQuery(id)
 	if err == pgx.ErrNoRows {
 		err = status.Errorf(
 			codes.NotFound,
@@ -40,33 +40,32 @@ func GetSource(id *api.SourceId) (*api.Source, error) {
 	return source, err
 }
 
-func getSourceQuery(id *api.SourceId) (*api.Source, error) {
+func (db *Client) getSourceQuery(id *api.SourceId) (*api.Source, error) {
 	var source api.Source
 	err := db.conn.QueryRow(db.ctx,
-		"SELECT * from sources WHERE id = $1", id.Id,
+		"SELECT * FROM sources WHERE id = $1", id.Id,
 	).Scan(&source.Id, &source.UserId, &source.Name, &source.Url,
-		&source.IsActive, &source.LastChecked, &source.RetryCount)
+		&source.IsActive, &source.RetryCount)
 	if err != nil {
 		return nil, err
 	}
 	return &source, nil
 }
 
-func GetUserSources(userId *api.UserId) (*api.Sources, error) {
-	sources, err := getUserSourcesQuery(userId)
-	return sources, err
+func (db *Client) GetUserSources(userId *api.UserId) (*api.Sources, error) {
+	return db.getUserSourcesQuery(userId)
 }
 
-func getUserSourcesQuery(userId *api.UserId) (*api.Sources, error) {
+func (db *Client) getUserSourcesQuery(userId *api.UserId) (*api.Sources, error) {
 	var sources api.Sources
 	rows, err := db.conn.Query(db.ctx,
-		"SELECT * from sources WHERE user_id = $1 ORDER BY id", userId.Id,
+		"SELECT * FROM sources WHERE user_id = $1 ORDER BY id", userId.Id,
 	)
 	defer rows.Close()
 	for rows.Next() {
 		var source api.Source
 		err = rows.Scan(&source.Id, &source.UserId, &source.Name, &source.Url,
-			&source.IsActive, &source.LastChecked, &source.RetryCount)
+			&source.IsActive, &source.RetryCount)
 		if err != nil {
 			return nil, err
 		}
@@ -75,8 +74,8 @@ func getUserSourcesQuery(userId *api.UserId) (*api.Sources, error) {
 	return &sources, nil
 }
 
-func UpdateSourceName(req *api.UpdateSourceNameRequest) error {
-	rowsAffected, err := updateSourceNameQuery(req)
+func (db *Client) UpdateSourceName(req *api.UpdateSourceNameRequest) error {
+	rowsAffected, err := db.updateSourceNameQuery(req)
 	if rowsAffected == 0 && err == nil {
 		err = status.Errorf(
 			codes.NotFound,
@@ -86,7 +85,7 @@ func UpdateSourceName(req *api.UpdateSourceNameRequest) error {
 	return err
 }
 
-func updateSourceNameQuery(req *api.UpdateSourceNameRequest) (int64, error) {
+func (db *Client) updateSourceNameQuery(req *api.UpdateSourceNameRequest) (int64, error) {
 	name := []rune(req.Name)
 	if len(name) > 256 {
 		name = name[:256]
@@ -98,8 +97,8 @@ func updateSourceNameQuery(req *api.UpdateSourceNameRequest) (int64, error) {
 	return cmdTag.RowsAffected(), err
 }
 
-func UpdateSourceToggleActive(id *api.SourceId) (*api.SourceToggleActiveResponse, error) {
-	source, err := updateSourceToggleActiveQuery(id)
+func (db *Client) UpdateSourceToggleActive(id *api.SourceId) (*api.SourceToggleActiveResponse, error) {
+	source, err := db.updateSourceToggleActiveQuery(id)
 	if err == pgx.ErrNoRows {
 		err = status.Errorf(
 			codes.NotFound,
@@ -109,10 +108,11 @@ func UpdateSourceToggleActive(id *api.SourceId) (*api.SourceToggleActiveResponse
 	return source, nil
 }
 
-func updateSourceToggleActiveQuery(id *api.SourceId) (*api.SourceToggleActiveResponse, error) {
+func (db *Client) updateSourceToggleActiveQuery(id *api.SourceId) (*api.SourceToggleActiveResponse, error) {
 	var sourceInfo api.SourceToggleActiveResponse
 	err := db.conn.QueryRow(db.ctx,
-		"UPDATE sources SET is_active = NOT is_active WHERE id = $1 "+
+		"UPDATE sources SET is_active = NOT is_active,"+
+			"last_checked = EXTRACT(EPOCH FROM NOW()) WHERE id = $1 "+
 			"RETURNING name, url, is_active",
 		id.Id,
 	).Scan(&sourceInfo.Name, &sourceInfo.Url, &sourceInfo.IsActive)
@@ -122,8 +122,8 @@ func updateSourceToggleActiveQuery(id *api.SourceId) (*api.SourceToggleActiveRes
 	return &sourceInfo, nil
 }
 
-func DeleteSource(id *api.SourceId) error {
-	rowsAffected, err := deleteSourceQuery(id)
+func (db *Client) DeleteSource(id *api.SourceId) error {
+	rowsAffected, err := db.deleteSourceQuery(id)
 	if rowsAffected == 0 && err == nil {
 		err = status.Errorf(
 			codes.NotFound,
@@ -133,7 +133,7 @@ func DeleteSource(id *api.SourceId) error {
 	return err
 }
 
-func deleteSourceQuery(id *api.SourceId) (int64, error) {
+func (db *Client) deleteSourceQuery(id *api.SourceId) (int64, error) {
 	cmdTag, err := db.conn.Exec(db.ctx,
 		"DELETE FROM sources WHERE id = $1", id.Id,
 	)

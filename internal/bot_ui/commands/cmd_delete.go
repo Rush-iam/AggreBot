@@ -1,22 +1,14 @@
 package commands
 
-import (
-	"AggreBot/api"
-	"AggreBot/internal/bot_ui/grpc_client"
-	"context"
-	"fmt"
-)
+import "fmt"
 
-func cmdDelete(c Command) *string {
+func (m *Manager) cmdDelete(c *command) *string {
 	var reply string
-	sourceToDelete, errReply := fetchSourceFromUserArg(c.userId, c.args)
+	sourceToDelete, errReply := m.getSourceFromUserArg(c.userId, c.args)
 	if errReply != nil {
 		return errReply
 	}
-	_, err := grpc_client.Cl.DeleteSource(
-		context.Background(),
-		&api.SourceId{Id: sourceToDelete.Id},
-	)
+	err := m.backend.DeleteSource(sourceToDelete.Id)
 	if err != nil {
 		reply = "⚠ Oops. Internal Error. Please try again later."
 		return &reply

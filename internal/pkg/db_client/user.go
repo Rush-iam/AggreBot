@@ -1,15 +1,15 @@
-package db
+package db_client
 
 import (
-	"AggreBot/api"
+	"AggreBot/internal/pkg/api"
 	"fmt"
 	"github.com/jackc/pgx/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func AddUser(id *api.UserId) error {
-	rowsAffected, err := addUserQuery(id)
+func (db *Client) AddUser(id *api.UserId) error {
+	rowsAffected, err := db.addUserQuery(id)
 	if rowsAffected == 0 && err == nil {
 		err = status.Errorf(
 			codes.AlreadyExists,
@@ -19,15 +19,15 @@ func AddUser(id *api.UserId) error {
 	return err
 }
 
-func addUserQuery(id *api.UserId) (int64, error) {
+func (db *Client) addUserQuery(id *api.UserId) (int64, error) {
 	cmdTag, err := db.conn.Exec(db.ctx,
 		"INSERT INTO users (id) VALUES ($1) ON CONFLICT DO NOTHING", id.Id,
 	)
 	return cmdTag.RowsAffected(), err
 }
 
-func GetUser(id *api.UserId) (*api.User, error) {
-	user, err := getUserQuery(id)
+func (db *Client) GetUser(id *api.UserId) (*api.User, error) {
+	user, err := db.getUserQuery(id)
 	if err == pgx.ErrNoRows {
 		err = status.Errorf(
 			codes.NotFound,
@@ -37,10 +37,10 @@ func GetUser(id *api.UserId) (*api.User, error) {
 	return user, err
 }
 
-func getUserQuery(id *api.UserId) (*api.User, error) {
+func (db *Client) getUserQuery(id *api.UserId) (*api.User, error) {
 	var user api.User
 	err := db.conn.QueryRow(db.ctx,
-		"SELECT * from users WHERE id = $1", id.Id,
+		"SELECT * FROM users WHERE id = $1", id.Id,
 	).Scan(&user.Id, &user.Filter)
 	if err != nil {
 		return nil, err
@@ -48,8 +48,8 @@ func getUserQuery(id *api.UserId) (*api.User, error) {
 	return &user, err
 }
 
-func UpdateUserFilter(user *api.User) error {
-	rowsAffected, err := updateUserFilterQuery(user)
+func (db *Client) UpdateUserFilter(user *api.User) error {
+	rowsAffected, err := db.updateUserFilterQuery(user)
 	if rowsAffected == 0 && err == nil {
 		err = status.Errorf(
 			codes.NotFound,
@@ -59,7 +59,7 @@ func UpdateUserFilter(user *api.User) error {
 	return err
 }
 
-func updateUserFilterQuery(user *api.User) (int64, error) {
+func (db *Client) updateUserFilterQuery(user *api.User) (int64, error) {
 	cmdTag, err := db.conn.Exec(db.ctx,
 		"UPDATE users SET filter = $1 WHERE id = $2",
 		user.Filter, user.Id,
@@ -67,8 +67,8 @@ func updateUserFilterQuery(user *api.User) (int64, error) {
 	return cmdTag.RowsAffected(), err
 }
 
-func DeleteUser(id *api.UserId) error {
-	rowsAffected, err := deleteUserQuery(id)
+func (db *Client) DeleteUser(id *api.UserId) error {
+	rowsAffected, err := db.deleteUserQuery(id)
 	if rowsAffected == 0 && err == nil {
 		err = status.Errorf(
 			codes.NotFound,
@@ -78,7 +78,7 @@ func DeleteUser(id *api.UserId) error {
 	return err
 }
 
-func deleteUserQuery(id *api.UserId) (int64, error) {
+func (db *Client) deleteUserQuery(id *api.UserId) (int64, error) {
 	cmdTag, err := db.conn.Exec(db.ctx,
 		"DELETE FROM users WHERE id = $1", id.Id,
 	)

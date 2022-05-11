@@ -1,16 +1,13 @@
 package commands
 
 import (
-	"AggreBot/api"
-	"AggreBot/internal/bot_ui/grpc_client"
-	"context"
 	"fmt"
 	"strings"
 )
 
-func cmdRename(c Command) *string {
+func (m *Manager) cmdRename(c *command) *string {
 	var reply string
-	sourceToRename, errReply := fetchSourceFromUserArg(c.userId, c.args)
+	sourceToRename, errReply := m.getSourceFromUserArg(c.userId, c.args)
 	if errReply != nil {
 		return errReply
 	}
@@ -19,13 +16,7 @@ func cmdRename(c Command) *string {
 		return &reply
 	}
 	newName := strings.Join(c.args[1:], " ")
-	_, err := grpc_client.Cl.UpdateSourceName(
-		context.Background(),
-		&api.UpdateSourceNameRequest{
-			Id:   sourceToRename.Id,
-			Name: newName,
-		},
-	)
+	err := m.backend.UpdateSourceName(sourceToRename.Id, newName)
 	if err != nil {
 		reply = "⚠ Oops. Internal Error. Please try again later."
 		return &reply

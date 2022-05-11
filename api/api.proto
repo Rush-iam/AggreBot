@@ -4,7 +4,7 @@ package api;
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "./api";
+option go_package = "./internal/pkg/api";
 
 service NewsfeedConfigurator {
   rpc addUser(UserId) returns (UserId) {
@@ -72,8 +72,7 @@ message Source {
   string name = 3;
   string url = 4;
   bool is_active = 5;
-  int64 last_checked = 6;
-  int64 retry_count = 7;
+  int64 retry_count = 6;
 }
 
 message SourceToggleActiveResponse {

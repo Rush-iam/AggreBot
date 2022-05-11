@@ -2,42 +2,54 @@ package bot_ui
 
 import (
 	"AggreBot/internal/bot_ui/commands"
-	"AggreBot/internal/bot_ui/tg_client"
+	"AggreBot/internal/pkg/grpc_client"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 )
 
-func RunBotLoop() {
+type Bot struct {
+	tgClient       *tgbotapi.BotAPI
+	commandManager *commands.Manager
+}
+
+func NewBot(tgClient *tgbotapi.BotAPI, grpcClient *grpc_client.Client) *Bot {
+	return &Bot{
+		tgClient:       tgClient,
+		commandManager: commands.NewManager(grpcClient),
+	}
+}
+
+func (bot *Bot) RunBotLoop() {
 	uConfig := tgbotapi.NewUpdate(0)
 	uConfig.Timeout = 60
 	for {
-		for u := range tg_client.Cl.GetUpdatesChan(uConfig) {
+		for u := range bot.tgClient.GetUpdatesChan(uConfig) {
 			if u.Message != nil && u.Message.Chat.IsPrivate() {
-				replyText := handleMessage(u.Message)
+				replyText := bot.handleMessage(u.Message)
 				if replyText != nil {
-					sendMessage(tg_client.Cl, u.Message.From.ID, replyText)
+					bot.sendMessage(u.Message.From.ID, replyText)
 				}
 			}
 		}
 	}
 }
 
-func handleMessage(msg *tgbotapi.Message) *string {
+func (bot *Bot) handleMessage(msg *tgbotapi.Message) *string {
 	log.Printf("[%s] %s", msg.From.UserName, msg.Text)
 
 	if len(msg.Entities) > 0 {
-		cmd := commands.ParseFromMessage(msg)
-		if cmd != nil {
-			return cmd.Execute()
+		command := commands.ParseFromMessage(msg)
+		if command != nil {
+			return bot.commandManager.Execute(command)
 		}
 	}
 	help := "👇 Use commands from Menu"
 	return &help
 }
 
-func sendMessage(tg *tgbotapi.BotAPI, userId int64, text *string) {
+func (bot *Bot) sendMessage(userId int64, text *string) {
 	reply := tgbotapi.NewMessage(userId, *text)
-	_, err := tg.Send(reply)
+	_, err := bot.tgClient.Send(reply)
 	if err != nil {
 		log.Print(err)
 	}

@@ -7,6 +7,7 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/jackc/pgx/v4 v4.16.1
+	github.com/mmcdole/gofeed v1.1.3
 	google.golang.org/genproto v0.0.0-20220317150908-0efb43f6373e
 	google.golang.org/grpc v1.46.0
 	google.golang.org/protobuf v1.28.0
@@ -24,7 +25,6 @@ require (
 	github.com/jackc/pgtype v1.11.0 // indirect
 	github.com/jackc/puddle v1.2.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/mmcdole/gofeed v1.1.3 // indirect
 	github.com/mmcdole/goxpp v0.0.0-20200921145534-2f3784f67354 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect

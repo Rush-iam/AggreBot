@@ -1,14 +1,11 @@
 package commands
 
 import (
-	"AggreBot/api"
-	"AggreBot/internal/bot_ui/grpc_client"
-	"context"
 	"fmt"
 	"regexp"
 )
 
-func cmdFilter(c Command) *string {
+func (m *Manager) cmdFilter(c *command) *string {
 	var reply string
 	var userFilter string
 	if len(c.args) == 0 {
@@ -27,13 +24,7 @@ func cmdFilter(c Command) *string {
 		return &reply
 	}
 
-	_, err = grpc_client.Cl.UpdateUserFilter(
-		context.Background(),
-		&api.User{
-			Id:     c.userId,
-			Filter: userFilter,
-		},
-	)
+	err = m.backend.UpdateUserFilter(c.userId, userFilter)
 	if err != nil {
 		reply = "⚠ Oops. Internal Error. Please try again later."
 		return &reply

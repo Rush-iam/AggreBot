@@ -1,4 +1,4 @@
-package db
+package db_client
 
 import (
 	"context"
@@ -8,21 +8,22 @@ import (
 	"time"
 )
 
-var db struct {
-	url  string
+type Client struct {
 	ctx  context.Context
 	conn *pgxpool.Pool
 }
 
-func Init(dbUser, dbPassword, dbHost, dbPort, dbName string) {
-	db.url = fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s", dbUser, dbPassword, dbHost, dbPort, dbName,
+func NewClient(ctx context.Context, user, password, host, port, name string) *Client {
+	url := fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s", user, password, host, port, name,
 	)
-	db.ctx = context.Background()
-	db.conn = connectWithRetries(db.ctx, db.url)
+	return &Client{
+		ctx:  ctx,
+		conn: connectWithRetries(ctx, url),
+	}
 }
 
-func Close() {
+func (db *Client) Close() {
 	db.conn.Close()
 	db.ctx = nil
 	db.conn = nil

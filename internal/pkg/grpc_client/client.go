@@ -1,7 +1,7 @@
 package grpc_client
 
 import (
-	"AggreBot/api"
+	"AggreBot/internal/pkg/api"
 	"context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -9,18 +9,25 @@ import (
 	"time"
 )
 
-var connection *grpc.ClientConn
-var Cl api.NewsfeedConfiguratorClient
-
-func Init(grpcServerEndpoint string) {
-	connection = connect(grpcServerEndpoint)
-	Cl = api.NewNewsfeedConfiguratorClient(connection)
+type Client struct {
+	connection *grpc.ClientConn
+	api        api.NewsfeedConfiguratorClient
+	ctx        context.Context
 }
 
-func Close() {
-	_ = connection.Close()
-	connection = nil
-	Cl = nil
+func New(ctx context.Context, grpcServerEndpoint string) *Client {
+	connection := connect(grpcServerEndpoint)
+	return &Client{
+		connection: connection,
+		api:        api.NewNewsfeedConfiguratorClient(connection),
+		ctx:        ctx,
+	}
+}
+
+func (c *Client) Close() {
+	_ = c.connection.Close()
+	c.connection = nil
+	c.api = nil
 }
 
 func connect(grpcServerEndpoint string) *grpc.ClientConn {
@@ -33,7 +40,7 @@ func connect(grpcServerEndpoint string) *grpc.ClientConn {
 		grpc.WithBlock(),
 	)
 	if err != nil {
-		log.Fatalf("Can't connect to gRPC server: %v", err)
+		log.Fatalf("Can't connect to gRPC server %v", err)
 	} else {
 		log.Printf("Connected to gRPC server: %s", grpcServerEndpoint)
 	}

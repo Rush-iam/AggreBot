@@ -1,15 +1,12 @@
 package commands
 
 import (
-	"AggreBot/api"
-	"AggreBot/internal/bot_ui/grpc_client"
-	"context"
 	"fmt"
 	"github.com/mmcdole/gofeed"
 	"log"
 )
 
-func cmdAdd(c Command) *string {
+func (m *Manager) cmdAdd(c *command) *string {
 	var reply string
 	if len(c.args) == 0 {
 		reply = "👉 Hey! You forgot source URL"
@@ -26,14 +23,7 @@ func cmdAdd(c Command) *string {
 		return &reply
 	}
 
-	_, err := grpc_client.Cl.AddSource(
-		context.Background(),
-		&api.AddSourceRequest{
-			UserId: c.userId,
-			Name:   sourceName,
-			Url:    sourceUrl,
-		},
-	)
+	err := m.backend.AddSource(c.userId, sourceName, sourceUrl)
 	if err != nil {
 		reply = "⚠ Oops. Internal Error. Please try again later."
 	} else {

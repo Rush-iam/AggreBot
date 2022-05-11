@@ -12,7 +12,6 @@ CREATE TABLE sources (
     name varchar(256) NOT NULL,
     url varchar(2048) NOT NULL,
     is_active bool DEFAULT TRUE,
-    last_checked bigint DEFAULT EXTRACT(EPOCH FROM NOW()),
     retry_count smallint DEFAULT 0,
     CONSTRAINT fk_user
         FOREIGN KEY(user_id)
@@ -20,9 +19,19 @@ CREATE TABLE sources (
             ON DELETE CASCADE
 );
 
+CREATE TABLE entries_log (
+    id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    source_id bigint NOT NULL,
+    hash char(16) NOT NULL,
+    CONSTRAINT fk_source
+        FOREIGN KEY(source_id)
+            REFERENCES sources(id)
+            ON DELETE CASCADE
+);
+
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE users, sources;
+DROP TABLE users, sources, entries_log;
 -- +goose StatementEnd

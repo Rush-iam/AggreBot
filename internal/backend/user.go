@@ -1,15 +1,14 @@
-package handlers
+package backend
 
 import (
-	"AggreBot/api"
-	"AggreBot/internal/backend/db"
+	"AggreBot/internal/pkg/api"
 	"context"
 	"github.com/golang/protobuf/ptypes/empty"
 	"log"
 )
 
 func (s Server) AddUser(_ context.Context, id *api.UserId) (*api.UserId, error) {
-	err := db.AddUser(id)
+	err := s.db.AddUser(id)
 	if err != nil {
 		log.Print(err)
 	} else {
@@ -19,7 +18,7 @@ func (s Server) AddUser(_ context.Context, id *api.UserId) (*api.UserId, error) 
 }
 
 func (s Server) GetUser(_ context.Context, id *api.UserId) (*api.User, error) {
-	user, err := db.GetUser(id)
+	user, err := s.db.GetUser(id)
 	if err != nil {
 		log.Print(err)
 	} else {
@@ -29,7 +28,7 @@ func (s Server) GetUser(_ context.Context, id *api.UserId) (*api.User, error) {
 }
 
 func (s Server) UpdateUserFilter(_ context.Context, user *api.User) (*empty.Empty, error) {
-	err := db.UpdateUserFilter(user)
+	err := s.db.UpdateUserFilter(user)
 	if err != nil {
 		log.Print(err)
 	} else {
@@ -39,7 +38,7 @@ func (s Server) UpdateUserFilter(_ context.Context, user *api.User) (*empty.Empt
 }
 
 func (s Server) DeleteUser(_ context.Context, id *api.UserId) (*empty.Empty, error) {
-	err := db.DeleteUser(id)
+	err := s.db.DeleteUser(id)
 	if err != nil {
 		log.Print(err)
 	} else {
