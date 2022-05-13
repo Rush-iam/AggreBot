@@ -22,7 +22,7 @@ CREATE TABLE sources (
 CREATE TABLE entries_log (
     id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     source_id bigint NOT NULL,
-    hash char(16) NOT NULL,
+    hash char(32) NOT NULL,
     CONSTRAINT fk_source
         FOREIGN KEY(source_id)
             REFERENCES sources(id)

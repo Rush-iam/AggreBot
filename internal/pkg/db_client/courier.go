@@ -1,13 +1,24 @@
 package db_client
 
+import (
+	"fmt"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
+
 type CourierSource struct {
 	Id         int64
 	UserId     int64
 	Name       string
 	Url        string
 	IsActive   bool
-	RetryCount int64
+	RetryCount int32
 	Filter     string
+}
+
+type UpdateSourceRetryCountRequest struct {
+	Id         int64
+	RetryCount int32
 }
 
 func (db *Client) GetActiveSources() ([]*CourierSource, error) {
@@ -39,4 +50,23 @@ func (db *Client) getActiveSourcesQuery() ([]*CourierSource, error) {
 		sources = append(sources, &source)
 	}
 	return sources, nil
+}
+
+func (db *Client) UpdateSourceRetryCount(req *UpdateSourceRetryCountRequest) error {
+	rowsAffected, err := db.updateSourceRetryCountQuery(req)
+	if rowsAffected == 0 && err == nil {
+		err = status.Errorf(
+			codes.NotFound,
+			fmt.Sprintf("db.UpdateSourceRetryCount: <%+v> not found", req),
+		)
+	}
+	return err
+}
+
+func (db *Client) updateSourceRetryCountQuery(req *UpdateSourceRetryCountRequest) (int64, error) {
+	cmdTag, err := db.conn.Exec(db.ctx,
+		"UPDATE sources SET retry_count = $1 WHERE id = $2",
+		req.RetryCount, req.Id,
+	)
+	return cmdTag.RowsAffected(), err
 }

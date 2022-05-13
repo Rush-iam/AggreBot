@@ -72,7 +72,7 @@ message Source {
   string name = 3;
   string url = 4;
   bool is_active = 5;
-  int64 retry_count = 6;
+  int32 retry_count = 6;
 }
 
 message SourceToggleActiveResponse {

@@ -62,6 +62,9 @@ func (db *Client) getUserSourcesQuery(userId *api.UserId) (*api.Sources, error) 
 		"SELECT * FROM sources WHERE user_id = $1 ORDER BY id", userId.Id,
 	)
 	defer rows.Close()
+	if err != nil {
+		return nil, err
+	}
 	for rows.Next() {
 		var source api.Source
 		err = rows.Scan(&source.Id, &source.UserId, &source.Name, &source.Url,
@@ -105,14 +108,13 @@ func (db *Client) UpdateSourceToggleActive(id *api.SourceId) (*api.SourceToggleA
 			fmt.Sprintf("db.UpdateSourceToggleActive: <%+v> not found", id),
 		)
 	}
-	return source, nil
+	return source, err
 }
 
 func (db *Client) updateSourceToggleActiveQuery(id *api.SourceId) (*api.SourceToggleActiveResponse, error) {
 	var sourceInfo api.SourceToggleActiveResponse
 	err := db.conn.QueryRow(db.ctx,
-		"UPDATE sources SET is_active = NOT is_active,"+
-			"last_checked = EXTRACT(EPOCH FROM NOW()) WHERE id = $1 "+
+		"UPDATE sources SET is_active = NOT is_active WHERE id = $1 "+
 			"RETURNING name, url, is_active",
 		id.Id,
 	).Scan(&sourceInfo.Name, &sourceInfo.Url, &sourceInfo.IsActive)

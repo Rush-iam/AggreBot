@@ -33,10 +33,9 @@ func (c *courier) readerRoutine(source *db_client.CourierSource) {
 	feedParser := gofeed.NewParser()
 	feed, err := feedParser.ParseURL(source.Url)
 	if err != nil {
-		newJob.ok = false
+		newJob.wasReadError = true
 		log.Printf("readerRoutine: %+v, %v", source, err)
 	} else {
-		newJob.ok = true
 		newJob.entries = feed.Items
 	}
 	c.jobQueue <- newJob
