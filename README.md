@@ -1,7 +1,7 @@
-# AggreBot - RSS Aggregator Telegram Bot
+# RSS AggreBot - RSS Aggregator Telegram Bot
 
 ## Что это?
-**AggreBot** - бот для Telegram, формирующий персональную новостную ленту на
+**RSS AggreBot** - бот для Telegram, формирующий персональную новостную ленту на
 основе различных RSS источников.
 
 

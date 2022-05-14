@@ -6,18 +6,20 @@ import (
 	"log"
 )
 
-const retryCountSendMessageThreshold = 60
+const readErrorNotifyThreshold = 60
 
-func (c *courier) readErrorHandler(source *db_client.CourierSource) {
-	newRetryCount := source.RetryCount + 1
-	if newRetryCount%retryCountSendMessageThreshold == 0 {
-		c.sendReadError(source)
-	} else {
-		c.updateSourceRetryCount(source.Id, newRetryCount)
-	}
+func (c *courier) readErrorReset(source *db_client.CourierSource) {
+	c.updateSourceRetryCount(source.Id, 0)
 }
 
-func (c *courier) sendReadError(source *db_client.CourierSource) {
+func (c *courier) readErrorHandler(source *db_client.CourierSource) {
+	if source.RetryCount > 0 && source.RetryCount%readErrorNotifyThreshold == 0 {
+		c.readErrorNotifyUser(source)
+	}
+	c.updateSourceRetryCount(source.Id, source.RetryCount+1)
+}
+
+func (c *courier) readErrorNotifyUser(source *db_client.CourierSource) {
 	message := readErrorMessage(source.Name, source.RetryCount)
 	err := tg_client.SendMessage(c.tg, source.UserId, message)
 	if err != nil {

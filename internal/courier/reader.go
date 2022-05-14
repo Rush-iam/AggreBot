@@ -2,7 +2,7 @@ package courier
 
 import (
 	"AggreBot/internal/pkg/db_client"
-	"github.com/mmcdole/gofeed"
+	"AggreBot/internal/pkg/rss_feed"
 	"log"
 	"time"
 )
@@ -30,8 +30,7 @@ func (c *courier) RunReader() {
 func (c *courier) readerRoutine(source *db_client.CourierSource) {
 	newJob := job{source: source}
 
-	feedParser := gofeed.NewParser()
-	feed, err := feedParser.ParseURL(source.Url)
+	feed, err := rss_feed.Fetch(source.Url)
 	if err != nil {
 		newJob.wasReadError = true
 		log.Printf("readerRoutine: %+v, %v", source, err)

@@ -30,6 +30,8 @@ func (bot *Bot) RunBotLoop() {
 				_ = tg_client.SendMessage(
 					bot.tgClient, u.Message.From.ID, replyText,
 				)
+			} else {
+				log.Printf("%+v", u)
 			}
 		}
 	}

@@ -1,9 +1,8 @@
 package commands
 
 import (
+	"AggreBot/internal/pkg/rss_feed"
 	"fmt"
-	"github.com/mmcdole/gofeed"
-	"log"
 )
 
 func cmdAddReply(sourceName string) string {
@@ -20,7 +19,7 @@ func (m *Manager) cmdAdd(c *command) string {
 		return errAddUrlTooLong
 	}
 
-	sourceName, ok := getRssTitle(sourceUrl)
+	sourceName, ok := rss_feed.GetTitle(sourceUrl)
 	if !ok {
 		return errAddRssParseError
 	}
@@ -31,14 +30,4 @@ func (m *Manager) cmdAdd(c *command) string {
 	}
 
 	return cmdAddReply(sourceName)
-}
-
-func getRssTitle(rawReference string) (string, bool) {
-	feedParser := gofeed.NewParser()
-	feed, err := feedParser.ParseURL(rawReference)
-	if err != nil {
-		log.Printf("getRssTitle: %v", err)
-		return "", false
-	}
-	return feed.Title, true
 }

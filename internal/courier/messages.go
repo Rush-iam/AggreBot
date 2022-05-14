@@ -17,7 +17,7 @@ func feedItemMessage(item *gofeed.Item, sourceName string) string {
 
 func readErrorMessage(sourceName string, sourceRetryCount int32) string {
 	return fmt.Sprintf(
-		"😵‍💫 I can't read Source %s, tried %d times",
+		"😵‍💫 I can't read Source \"%s\" - tried %d times",
 		sourceName, sourceRetryCount,
 	)
 }
