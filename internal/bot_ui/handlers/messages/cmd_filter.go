@@ -1,6 +1,8 @@
-package commands
+package messages
 
 import (
+	"AggreBot/internal/bot_ui/command"
+	"AggreBot/internal/bot_ui/errors"
 	"fmt"
 	"regexp"
 )
@@ -13,24 +15,24 @@ func cmdFilterReply(userFilter string) string {
 	}
 }
 
-func (m *Manager) cmdFilter(c *command) string {
+func (m *Manager) cmdFilter(c *command.Command) string {
 	var userFilter string
-	if len(c.args) > 0 {
-		userFilter = c.args[0]
+	if len(c.Args) > 0 {
+		userFilter = c.Args[0]
 	}
 
 	if len([]rune(userFilter)) > 256 {
-		return errFilterTooLong
+		return errors.ErrFilterTooLong
 	}
 
 	_, err := regexp.Compile(userFilter)
 	if err != nil {
-		return errFilterRegExp
+		return errors.ErrFilterRegExp
 	}
 
-	err = m.backend.UpdateUserFilter(c.userId, userFilter)
+	err = m.backend.UpdateUserFilter(c.UserId, userFilter)
 	if err != nil {
-		return errInternalError
+		return errors.ErrInternalError
 	}
 
 	return cmdFilterReply(userFilter)

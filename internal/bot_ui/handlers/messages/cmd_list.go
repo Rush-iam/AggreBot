@@ -1,6 +1,9 @@
-package commands
+package messages
 
 import (
+	"AggreBot/internal/bot_ui/command"
+	"AggreBot/internal/bot_ui/errors"
+	"AggreBot/internal/bot_ui/markup"
 	"AggreBot/internal/pkg/api"
 	"fmt"
 	"strings"
@@ -21,7 +24,7 @@ func cmdListReply(userFilter string, sources []*api.Source) string {
 			replyLines = append(
 				replyLines,
 				fmt.Sprintf("%c %d. %s",
-					boolToEmoji(source.IsActive), i+1, source.Name),
+					markup.BoolToEmoji(source.IsActive), i+1, source.Name),
 			)
 		}
 	}
@@ -29,11 +32,11 @@ func cmdListReply(userFilter string, sources []*api.Source) string {
 	return strings.Join(replyLines, "\n")
 }
 
-func (m *Manager) cmdList(c *command) string {
-	userFilter, err1 := m.backend.GetUserFilter(c.userId)
-	sources, err2 := m.backend.GetUserSources(c.userId)
+func (m *Manager) cmdList(c *command.Command) string {
+	userFilter, err1 := m.backend.GetUserFilter(c.UserId)
+	sources, err2 := m.backend.GetUserSources(c.UserId)
 	if err1 != nil || err2 != nil {
-		return errInternalError
+		return errors.ErrInternalError
 	}
 
 	return cmdListReply(*userFilter, sources)

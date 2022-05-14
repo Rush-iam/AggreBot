@@ -1,13 +1,16 @@
-package commands
+package messages
 
-import "AggreBot/internal/pkg/grpc_client"
+import (
+	"AggreBot/internal/bot_ui/command"
+	"AggreBot/internal/pkg/grpc_client"
+)
 
 type Manager struct {
 	backend         *grpc_client.Client
 	commandHandlers map[string]commandHandler
 }
 
-type commandHandler func(*command) string
+type commandHandler func(command *command.Command) string
 
 func NewManager(grpcClient *grpc_client.Client) *Manager {
 	var m Manager
@@ -26,8 +29,8 @@ func NewManager(grpcClient *grpc_client.Client) *Manager {
 	return &m
 }
 
-func (m *Manager) Execute(c *command) string {
-	cmdHandler, ok := m.commandHandlers[c.cmdName]
+func (m *Manager) Execute(c *command.Command) string {
+	cmdHandler, ok := m.commandHandlers[c.Cmd]
 	if ok {
 		reply := cmdHandler(c)
 		return reply

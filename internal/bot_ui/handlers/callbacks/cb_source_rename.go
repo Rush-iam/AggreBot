@@ -1,0 +1,26 @@
+package callbacks
+
+import (
+	"AggreBot/internal/bot_ui/command"
+	"AggreBot/internal/bot_ui/markup"
+	"AggreBot/internal/bot_ui/user_state"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+)
+
+func cbSourceRenameReplyText(isActive bool, sourceName, url string) string {
+	prevReply := cbSourceMenuReplyText(isActive, sourceName, url)
+	return prevReply + "\n\n👇 Type new name:"
+}
+
+func (m *Manager) cbSourceRename(c *command.Command) (string, *tgbotapi.InlineKeyboardMarkup) {
+	source, errReply := m.getSourceFromArg(c.UserId, c.Args)
+	if errReply != "" {
+		keyboard := markup.KeyboardBackToMenu()
+		return errReply, &keyboard
+	}
+
+	c.UserState.State = user_state.SourceRename
+	c.UserState.Value = source.Id
+	reply := cbSourceRenameReplyText(source.IsActive, source.Name, source.Url)
+	return reply, nil
+}

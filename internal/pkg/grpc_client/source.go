@@ -24,6 +24,16 @@ func (c *Client) AddSource(userId int64, name, url string) error {
 	return err
 }
 
+func (c *Client) GetSource(sourceId int64) (*api.Source, error) {
+	source, err := c.api.GetSource(
+		c.ctx,
+		&api.SourceId{
+			Id: sourceId,
+		},
+	)
+	return source, err
+}
+
 func (c *Client) UpdateSourceName(sourceId int64, name string) error {
 	_, err := c.api.UpdateSourceName(
 		c.ctx,
