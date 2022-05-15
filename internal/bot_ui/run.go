@@ -57,7 +57,7 @@ func (bot *Bot) RunBotLoop() {
 }
 
 func (bot *Bot) handleMessage(msg *tgbotapi.Message) (string, *tgbotapi.InlineKeyboardMarkup) {
-	log.Printf("[%s] %s", msg.From.UserName, msg.Text)
+	log.Printf("%s] %s", msg.From.UserName, msg.Text)
 
 	userState := bot.userState[msg.From.ID]
 	cmd := command.FromMessage(msg, userState)
@@ -72,7 +72,7 @@ func (bot *Bot) handleMessage(msg *tgbotapi.Message) (string, *tgbotapi.InlineKe
 }
 
 func (bot *Bot) handleCallback(query *tgbotapi.CallbackQuery) (string, *tgbotapi.InlineKeyboardMarkup) {
-	log.Printf("[%s> %s", query.From.UserName, query.Data)
+	log.Printf("%s> %s", query.From.UserName, query.Data)
 
 	userState := bot.userState[query.From.ID]
 	cmd := command.FromCallbackQuery(query, userState)
