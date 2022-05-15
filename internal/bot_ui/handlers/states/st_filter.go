@@ -13,12 +13,12 @@ func stFilterReplyText(userFilter string) string {
 	if userFilter == "" {
 		return "🔍 No Filter set"
 	} else {
-		return fmt.Sprintf("🔍 RegExp Filter set: '%s'", userFilter)
+		return fmt.Sprintf("🔍 Filter set: \"%s\"", userFilter)
 	}
 }
 
 func (m *Manager) stFilterReply(c *command.Command) string {
-	userFilter := c.Cmd
+	userFilter := c.Text
 	if len([]rune(userFilter)) > 256 {
 		return errors.ErrFilterTooLong
 	}

@@ -8,7 +8,7 @@ import (
 )
 
 func cbFilterRemoveReplyText() string {
-	return "🔍 Filter has been removed!"
+	return "🔍 Filter has been removed"
 }
 
 func (m *Manager) cbFilterRemove(c *command.Command) (string, *tgbotapi.InlineKeyboardMarkup) {

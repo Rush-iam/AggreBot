@@ -11,7 +11,7 @@ import (
 
 func cbListReplyText(sourcesLen int) string {
 	if sourcesLen == 0 {
-		return "🗒 No sources. Try to add!"
+		return "🗒 Nothing here. Try to add!"
 	} else {
 		return "📝 Your sources:"
 	}
@@ -20,7 +20,7 @@ func cbListReplyText(sourcesLen int) string {
 func cbListReplyButtons(sources []*api.Source) [][]tgbotapi.InlineKeyboardButton {
 	buttons := make([][]tgbotapi.InlineKeyboardButton, len(sources)+1)
 	for i, source := range sources {
-		text := fmt.Sprintf("%c %s", markup.BoolToEmoji(source.IsActive), source.Name)
+		text := markup.SourceString(source.Name, source.IsActive)
 		data := fmt.Sprintf("source_menu %d", source.Id)
 		buttons[i] = markup.ButtonRow(markup.Button(text, data))
 	}

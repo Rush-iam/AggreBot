@@ -3,7 +3,6 @@ package bot_ui
 import (
 	"AggreBot/internal/bot_ui/command"
 	"AggreBot/internal/bot_ui/handlers/callbacks"
-	"AggreBot/internal/bot_ui/handlers/messages"
 	"AggreBot/internal/bot_ui/handlers/states"
 	"AggreBot/internal/bot_ui/user_state"
 	"AggreBot/internal/pkg/grpc_client"
@@ -14,7 +13,6 @@ import (
 
 type Bot struct {
 	tgClient        *tgbotapi.BotAPI
-	commandManager  *messages.Manager
 	callbackManager *callbacks.Manager
 	stateManager    *states.Manager
 	userState       map[int64]*user_state.UserState
@@ -23,7 +21,6 @@ type Bot struct {
 func NewBot(tgClient *tgbotapi.BotAPI, grpcClient *grpc_client.Client) *Bot {
 	return &Bot{
 		tgClient:        tgClient,
-		commandManager:  messages.NewManager(grpcClient),
 		callbackManager: callbacks.NewManager(grpcClient),
 		stateManager:    states.NewManager(grpcClient),
 		userState:       make(map[int64]*user_state.UserState),
@@ -37,13 +34,15 @@ func (bot *Bot) RunBotLoop() {
 	var replyText string
 	var markup *tgbotapi.InlineKeyboardMarkup
 	for u := range bot.tgClient.GetUpdatesChan(uConfig) {
-		if u.Message != nil {
+		if u.Message != nil && u.Message.Text != "" {
 			userId = u.Message.From.ID
+			bot.checkNilUserState(userId)
 			replyText, markup = bot.handleMessage(u.Message)
-			bot.userState[userId] = &user_state.UserState{}
+			bot.resetUserState(userId)
 			_ = tg_client.SendMessage(bot.tgClient, userId, replyText, markup)
 		} else if u.CallbackQuery != nil {
 			userId = u.CallbackQuery.From.ID
+			bot.checkNilUserState(userId)
 			replyText, markup = bot.handleCallback(u.CallbackQuery)
 			_ = tg_client.SendCallbackAnswer(bot.tgClient, u.CallbackQuery.ID, "")
 			_ = tg_client.UpdateMessage(
@@ -62,26 +61,31 @@ func (bot *Bot) handleMessage(msg *tgbotapi.Message) (string, *tgbotapi.InlineKe
 
 	userState := bot.userState[msg.From.ID]
 	cmd := command.FromMessage(msg, userState)
-	if cmd != nil {
-		return bot.commandManager.Execute(cmd), nil
-	} else {
-		cmd = command.FromValues(msg.From.ID, msg.Text, userState)
-		if userState != nil && userState.State != user_state.Empty {
-			return bot.stateManager.Execute(cmd)
-		} else {
-			return bot.callbackManager.ExecuteMenu(cmd)
-		}
+
+	switch {
+	case cmd.Text == "/start":
+		return bot.callbackManager.ExecuteMenu(cmd)
+	case userState.State != user_state.Empty:
+		return bot.stateManager.Execute(cmd)
 	}
+	return "", nil
 }
 
 func (bot *Bot) handleCallback(query *tgbotapi.CallbackQuery) (string, *tgbotapi.InlineKeyboardMarkup) {
-	log.Printf("[%s]Q %s", query.From.UserName, query.Data)
+	log.Printf("[%s> %s", query.From.UserName, query.Data)
 
 	userState := bot.userState[query.From.ID]
-	if userState == nil {
-		bot.userState[query.From.ID] = &user_state.UserState{}
-		userState = bot.userState[query.From.ID]
-	}
 	cmd := command.FromCallbackQuery(query, userState)
 	return bot.callbackManager.Execute(cmd)
+}
+
+func (bot *Bot) checkNilUserState(userId int64) {
+	if _, ok := bot.userState[userId]; !ok {
+		bot.userState[userId] = &user_state.UserState{}
+	}
+}
+
+func (bot *Bot) resetUserState(userId int64) {
+	bot.userState[userId].State = user_state.Empty
+	bot.userState[userId].Value = 0
 }

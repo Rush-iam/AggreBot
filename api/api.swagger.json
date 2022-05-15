@@ -145,14 +145,14 @@
         ]
       }
     },
-    "/source/{id}/toggle_active": {
+    "/source/{id}/{isActive}": {
       "patch": {
-        "operationId": "NewsfeedConfigurator_updateSourceToggleActive",
+        "operationId": "NewsfeedConfigurator_updateSourceIsActive",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiSourceToggleActiveResponse"
+              "$ref": "#/definitions/apiUpdateSourceIsActiveResponse"
             }
           },
           "default": {
@@ -169,6 +169,12 @@
             "required": true,
             "type": "string",
             "format": "int64"
+          },
+          {
+            "name": "isActive",
+            "in": "path",
+            "required": true,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -385,7 +391,18 @@
         }
       }
     },
-    "apiSourceToggleActiveResponse": {
+    "apiSources": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/apiSource"
+          }
+        }
+      }
+    },
+    "apiUpdateSourceIsActiveResponse": {
       "type": "object",
       "properties": {
         "name": {
@@ -396,17 +413,6 @@
         },
         "isActive": {
           "type": "boolean"
-        }
-      }
-    },
-    "apiSources": {
-      "type": "object",
-      "properties": {
-        "sources": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/apiSource"
-          }
         }
       }
     },

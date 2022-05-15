@@ -13,6 +13,10 @@ func BoolToEmoji(value bool) rune {
 	}
 }
 
+func SourceString(sourceName string, isActive bool) string {
+	return fmt.Sprintf("%c %s", BoolToEmoji(isActive), sourceName)
+}
+
 func Keyboard(buttons [][]tgbotapi.InlineKeyboardButton) tgbotapi.InlineKeyboardMarkup {
 	return tgbotapi.NewInlineKeyboardMarkup(buttons...)
 }

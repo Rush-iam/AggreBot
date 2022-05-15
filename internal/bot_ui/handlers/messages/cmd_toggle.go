@@ -12,12 +12,12 @@ func cmdToggleReply(sourceIsActive bool, sourceName string) string {
 }
 
 func (m *Manager) cmdToggle(c *command.Command) string {
-	sourceToToggle, errReply := m.getSourceFromUserArg(c.UserId, c.Args)
+	sourceToToggle, errReply := m.getSourceFromUserArg(c.UserId, c.Text)
 	if errReply != "" {
 		return errReply
 	}
 
-	source, err := m.backend.UpdateSourceToggleActive(sourceToToggle.Id)
+	source, err := m.backend.UpdateSourceIsActive(sourceToToggle.Id, !sourceToToggle.IsActive)
 	if err != nil {
 		return errors.ErrInternalError
 	}

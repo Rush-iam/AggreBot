@@ -49,9 +49,9 @@ service NewsfeedConfigurator {
       patch: "/source/{id}/name/{name}"
     };
   };
-  rpc updateSourceToggleActive(SourceId) returns (SourceToggleActiveResponse) {
+  rpc updateSourceIsActive(UpdateSourceIsActiveRequest) returns (UpdateSourceIsActiveResponse) {
     option (google.api.http) = {
-      patch: "/source/{id}/toggle_active"
+      patch: "/source/{id}/{is_active}"
     };
   };
   rpc deleteSource(SourceId) returns (google.protobuf.Empty) {
@@ -75,7 +75,12 @@ message Source {
   int32 retry_count = 6;
 }
 
-message SourceToggleActiveResponse {
+message UpdateSourceIsActiveRequest {
+  int64 id = 1;
+  bool is_active = 2;
+}
+
+message UpdateSourceIsActiveResponse {
   string name = 1;
   string url = 2;
   bool is_active = 3;

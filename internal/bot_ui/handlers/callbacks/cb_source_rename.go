@@ -8,12 +8,12 @@ import (
 )
 
 func cbSourceRenameReplyText(isActive bool, sourceName, url string) string {
-	prevReply := cbSourceMenuReplyText(isActive, sourceName, url)
+	prevReply := cbSourceMenuReplyText(sourceName, isActive, url)
 	return prevReply + "\n\n👇 Type new name:"
 }
 
 func (m *Manager) cbSourceRename(c *command.Command) (string, *tgbotapi.InlineKeyboardMarkup) {
-	source, errReply := m.getSourceFromArg(c.UserId, c.Args)
+	source, errReply := m.getSourceIdFromArg(c.UserId, c.Text)
 	if errReply != "" {
 		keyboard := markup.KeyboardBackToMenu()
 		return errReply, &keyboard

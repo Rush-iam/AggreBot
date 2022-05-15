@@ -5,6 +5,7 @@ import (
 	"AggreBot/internal/bot_ui/errors"
 	"AggreBot/internal/pkg/rss_feed"
 	"fmt"
+	"strings"
 )
 
 func cmdAddReply(sourceName string) string {
@@ -12,11 +13,12 @@ func cmdAddReply(sourceName string) string {
 }
 
 func (m *Manager) cmdAdd(c *command.Command) string {
-	if len(c.Args) == 0 {
+	words := strings.Fields(c.Text)
+	if len(words) == 0 {
 		return errors.ErrAddNoUrl
 	}
 
-	sourceUrl := c.Args[0]
+	sourceUrl := words[1]
 	if len([]rune(sourceUrl)) > 2048 {
 		return errors.ErrAddUrlTooLong
 	}

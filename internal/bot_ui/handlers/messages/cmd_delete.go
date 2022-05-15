@@ -11,7 +11,7 @@ func cmdDeleteReply(sourceToDeleteName string) string {
 }
 
 func (m *Manager) cmdDelete(c *command.Command) string {
-	sourceToDelete, errReply := m.getSourceFromUserArg(c.UserId, c.Args)
+	sourceToDelete, errReply := m.getSourceFromUserArg(c.UserId, c.Text)
 	if errReply != "" {
 		return errReply
 	}

@@ -100,23 +100,23 @@ func (db *Client) updateSourceNameQuery(req *api.UpdateSourceNameRequest) (int64
 	return cmdTag.RowsAffected(), err
 }
 
-func (db *Client) UpdateSourceToggleActive(id *api.SourceId) (*api.SourceToggleActiveResponse, error) {
-	source, err := db.updateSourceToggleActiveQuery(id)
+func (db *Client) UpdateSourceIsActive(req *api.UpdateSourceIsActiveRequest) (*api.UpdateSourceIsActiveResponse, error) {
+	resp, err := db.updateSourceIsActiveQuery(req)
 	if err == pgx.ErrNoRows {
 		err = status.Errorf(
 			codes.NotFound,
-			fmt.Sprintf("db.UpdateSourceToggleActive: <%+v> not found", id),
+			fmt.Sprintf("db.UpdateSourceIsActive: <%+v> not found", req),
 		)
 	}
-	return source, err
+	return resp, err
 }
 
-func (db *Client) updateSourceToggleActiveQuery(id *api.SourceId) (*api.SourceToggleActiveResponse, error) {
-	var sourceInfo api.SourceToggleActiveResponse
+func (db *Client) updateSourceIsActiveQuery(req *api.UpdateSourceIsActiveRequest) (*api.UpdateSourceIsActiveResponse, error) {
+	var sourceInfo api.UpdateSourceIsActiveResponse
 	err := db.conn.QueryRow(db.ctx,
-		"UPDATE sources SET is_active = NOT is_active WHERE id = $1 "+
+		"UPDATE sources SET is_active = $1 WHERE id = $2 "+
 			"RETURNING name, url, is_active",
-		id.Id,
+		req.IsActive, req.Id,
 	).Scan(&sourceInfo.Name, &sourceInfo.Url, &sourceInfo.IsActive)
 	if err != nil {
 		return nil, err

@@ -5,6 +5,7 @@ import (
 	"AggreBot/internal/bot_ui/errors"
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 func cmdFilterReply(userFilter string) string {
@@ -17,8 +18,10 @@ func cmdFilterReply(userFilter string) string {
 
 func (m *Manager) cmdFilter(c *command.Command) string {
 	var userFilter string
-	if len(c.Args) > 0 {
-		userFilter = c.Args[0]
+	args := strings.Fields(c.Text)
+
+	if len(args) > 1 {
+		userFilter = args[1]
 	}
 
 	if len([]rune(userFilter)) > 256 {

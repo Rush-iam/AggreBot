@@ -6,19 +6,24 @@ import (
 	"AggreBot/internal/bot_ui/markup"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-func stRenameReplyText(sourceToRenameIsActive bool, newName string) string {
-	return fmt.Sprintf("%c New name: %s", markup.BoolToEmoji(sourceToRenameIsActive), newName)
+func stRenameReplyText(sourceIsActive bool, sourceName string) string {
+	return fmt.Sprintf("New name:\n%s", markup.SourceString(sourceName, sourceIsActive))
 }
 
 func (m *Manager) stRenameReply(c *command.Command, sourceId int64) (string, bool) {
 	sourceToRename, err := m.backend.GetSource(sourceId)
 	if err != nil || sourceToRename.UserId != c.UserId {
-		return errors.ErrInternalError, false
+		if status.Code(err) == codes.NotFound {
+			return errors.ErrNoSuchSource, false
+		} else {
+			return errors.ErrInternalError, false
+		}
 	}
-
-	newName := c.Cmd
+	newName := c.Text
 	err = m.backend.UpdateSourceName(sourceToRename.Id, newName)
 	if err != nil {
 		return errors.ErrInternalError, false

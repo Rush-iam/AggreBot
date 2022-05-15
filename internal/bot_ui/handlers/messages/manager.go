@@ -30,7 +30,7 @@ func NewManager(grpcClient *grpc_client.Client) *Manager {
 }
 
 func (m *Manager) Execute(c *command.Command) string {
-	cmdHandler, ok := m.commandHandlers[c.Cmd]
+	cmdHandler, ok := m.commandHandlers[c.Text]
 	if ok {
 		reply := cmdHandler(c)
 		return reply

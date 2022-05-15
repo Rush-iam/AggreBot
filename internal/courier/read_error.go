@@ -21,7 +21,7 @@ func (c *courier) readErrorHandler(source *db_client.CourierSource) {
 
 func (c *courier) readErrorNotifyUser(source *db_client.CourierSource) {
 	message := readErrorMessage(source.Name, source.RetryCount)
-	err := tg_client.SendMessage(c.tg, source.UserId, message)
+	err := tg_client.SendMessage(c.tg, source.UserId, message, nil)
 	if err != nil {
 		log.Printf("c.readErrorHandler: %v", err)
 	} else {

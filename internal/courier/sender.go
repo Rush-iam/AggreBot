@@ -66,7 +66,7 @@ func (c *courier) sendFeedItems(feedItems []feedItemToSend, job job) []string {
 		matched, _ := regexp.MatchString(job.source.Filter, feedItem.item.Title)
 		if matched {
 			message := feedItemMessage(feedItem.item, job.source.Name)
-			err := tg_client.SendMessage(c.tg, job.source.UserId, message)
+			err := tg_client.SendMessage(c.tg, job.source.UserId, message, nil)
 			if err != nil {
 				log.Printf("c.senderRoutine: %v", err)
 				break

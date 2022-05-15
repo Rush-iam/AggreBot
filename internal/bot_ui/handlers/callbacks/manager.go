@@ -4,6 +4,8 @@ import (
 	"AggreBot/internal/bot_ui/command"
 	"AggreBot/internal/pkg/grpc_client"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"log"
+	"strings"
 )
 
 type Manager struct {
@@ -18,28 +20,39 @@ func NewManager(grpcClient *grpc_client.Client) *Manager {
 	m = Manager{
 		backend: grpcClient,
 		callbackHandlers: map[string]callbackHandler{
-			"menu":          m.cbMenu,
-			"list":          m.cbList,
-			"add":           m.cbAdd,
-			"filter":        m.cbFilter,
+			"menu": m.cbMenu,
+
+			"list":       m.cbList,
+			"source_add": m.cbSourceAdd,
+			"filter":     m.cbFilter,
+
+			"source_menu":           m.cbSourceMenu,
+			"source_rename":         m.cbSourceRename,
+			"source_active_enable":  m.cbSourceActiveEnable,
+			"source_active_disable": m.cbSourceActiveDisable,
+			"source_remove":         m.cbSourceRemove,
+
 			"filter_menu":   m.cbFilterMenu,
 			"filter_remove": m.cbFilterRemove,
-			"source_menu":   m.cbSourceMenu,
-			"source_rename": m.cbSourceRename,
-			//"source_enable": m.cbSourceEnable,
-			//"source_disable": m.cbSourceDisable,
-			//"source_remove": m.cbSourceRemove,
 		},
 	}
 	return &m
 }
 
 func (m *Manager) Execute(c *command.Command) (string, *tgbotapi.InlineKeyboardMarkup) {
-	cmdHandler, ok := m.callbackHandlers[c.Cmd]
+	var cmdName string
+	if cmdEndIndex := strings.Index(c.Text, " "); cmdEndIndex == -1 {
+		cmdName = c.Text
+	} else {
+		cmdName = c.Text[:cmdEndIndex]
+	}
+
+	cmdHandler, ok := m.callbackHandlers[cmdName]
 	if ok {
 		reply, markup := cmdHandler(c)
 		return reply, markup
 	} else {
+		log.Printf("callbacks.manager.Execute: Unknown query: \"%s\"", c.Text)
 		return m.ExecuteMenu(c)
 	}
 }

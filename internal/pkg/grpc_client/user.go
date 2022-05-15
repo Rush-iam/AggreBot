@@ -10,17 +10,22 @@ func (c *Client) AddUser(userId int64) error {
 	return err
 }
 
-func (c *Client) GetUserFilter(userId int64) (*string, error) {
-	responseUser, err := c.api.GetUser(
+func (c *Client) GetUser(userId int64) (*api.User, error) {
+	user, err := c.api.GetUser(
 		c.ctx,
 		&api.UserId{
 			Id: userId,
 		},
 	)
+	return user, err
+}
+
+func (c *Client) GetUserFilter(userId int64) (*string, error) {
+	user, err := c.GetUser(userId)
 	if err != nil {
 		return nil, err
 	}
-	return &responseUser.Filter, nil
+	return &user.Filter, nil
 }
 
 func (c *Client) UpdateUserFilter(userId int64, newFilter string) error {

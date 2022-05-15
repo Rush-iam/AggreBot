@@ -45,11 +45,12 @@ func (c *Client) UpdateSourceName(sourceId int64, name string) error {
 	return err
 }
 
-func (c *Client) UpdateSourceToggleActive(sourceId int64) (*api.SourceToggleActiveResponse, error) {
-	toggleResponse, err := c.api.UpdateSourceToggleActive(
+func (c *Client) UpdateSourceIsActive(sourceId int64, isActive bool) (*api.UpdateSourceIsActiveResponse, error) {
+	toggleResponse, err := c.api.UpdateSourceIsActive(
 		c.ctx,
-		&api.SourceId{
-			Id: sourceId,
+		&api.UpdateSourceIsActiveRequest{
+			Id:       sourceId,
+			IsActive: isActive,
 		},
 	)
 	return toggleResponse, err

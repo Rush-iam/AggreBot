@@ -47,14 +47,14 @@ func (s Server) UpdateSourceName(_ context.Context, req *api.UpdateSourceNameReq
 	return &empty.Empty{}, err
 }
 
-func (s Server) UpdateSourceToggleActive(_ context.Context, id *api.SourceId) (*api.SourceToggleActiveResponse, error) {
-	source, err := s.db.UpdateSourceToggleActive(id)
+func (s Server) UpdateSourceIsActive(_ context.Context, req *api.UpdateSourceIsActiveRequest) (*api.UpdateSourceIsActiveResponse, error) {
+	resp, err := s.db.UpdateSourceIsActive(req)
 	if err != nil {
 		log.Print(err)
 	} else {
-		log.Printf("s.UpdateSourceToggleActive: <%+v>", id)
+		log.Printf("s.UpdateSourceIsActive: <%+v>", req)
 	}
-	return source, err
+	return resp, err
 }
 
 func (s Server) DeleteSource(_ context.Context, id *api.SourceId) (*empty.Empty, error) {

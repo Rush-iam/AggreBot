@@ -13,16 +13,17 @@ func cmdRenameReply(sourceToRenameIsActive bool, newName string) string {
 }
 
 func (m *Manager) cmdRename(c *command.Command) string {
-	sourceToRename, errReply := m.getSourceFromUserArg(c.UserId, c.Args)
+	sourceToRename, errReply := m.getSourceFromUserArg(c.UserId, c.Text)
 	if errReply != "" {
 		return errReply
 	}
 
-	if len(c.Args) == 1 {
+	args := strings.Fields(c.Text)
+	if len(args) <= 2 {
 		return errors.ErrRenameNoName
 	}
 
-	newName := strings.Join(c.Args[1:], " ")
+	newName := strings.Join(args[2:], " ")
 	err := m.backend.UpdateSourceName(sourceToRename.Id, newName)
 	if err != nil {
 		return errors.ErrInternalError

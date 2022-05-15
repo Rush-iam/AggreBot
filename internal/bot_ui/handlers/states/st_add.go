@@ -10,11 +10,11 @@ import (
 )
 
 func stAddReplyText(sourceName string) string {
-	return fmt.Sprintf("✅ Added: %s", sourceName)
+	return fmt.Sprintf("New Source:\n%s", markup.SourceString(sourceName, true))
 }
 
 func (m *Manager) stAddReply(c *command.Command) string {
-	sourceUrl := c.Cmd
+	sourceUrl := c.Text
 	if len([]rune(sourceUrl)) > 2048 {
 		return errors.ErrAddUrlTooLong
 	}
