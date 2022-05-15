@@ -3,6 +3,7 @@ package main
 import (
 	"AggreBot/internal/backend"
 	"AggreBot/internal/pkg/api"
+	"AggreBot/internal/pkg/config"
 	"AggreBot/internal/pkg/db_client"
 	"AggreBot/internal/pkg/exit_signal"
 	"context"
@@ -14,42 +15,42 @@ import (
 	"net/http"
 )
 
-const (
-	dbUser     = "postgres"
-	dbPassword = "j3qq4"
-	dbHost     = "localhost"
-	dbPort     = "5432"
-	dbName     = "aggrebot"
-
-	grpcServerEndpoint = "localhost:8080"
-	restProxyEndpoint  = "localhost:8081"
-)
+var flags = map[string]string{
+	"dbuser":   "Database Username",
+	"dbpass":   "Database Password",
+	"dbhost":   "Database Host",
+	"dbname":   "Database Name",
+	"grpchost": "gRPC Server Host",
+	"resthost": "REST Proxy Host",
+}
 
 func main() {
+	cfg := config.FromFlags(flags)
+
 	db := db_client.NewClient(
-		context.Background(), dbUser, dbPassword, dbHost, dbPort, dbName,
+		context.Background(), cfg["dbuser"], cfg["dbpass"], cfg["dbhost"], cfg["dbname"],
 	)
 	defer db.Close()
 
-	go runGrpcServer(db)
-	go runRestProxy()
+	go runGrpcServer(cfg["grpchost"], db)
+	go runRestProxy(cfg["grpchost"], cfg["resthost"])
 
 	<-exit_signal.Wait()
 }
 
-func runGrpcServer(db *db_client.Client) {
+func runGrpcServer(grpcHost string, db *db_client.Client) {
 	grpcServer := backend.NewServer(db)
-	listener, err := net.Listen("tcp", grpcServerEndpoint)
+	listener, err := net.Listen("tcp", grpcHost)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
-	log.Printf("Start serving gRPC on %s...", grpcServerEndpoint)
+	log.Printf("Start serving gRPC on %s...", grpcHost)
 	err = grpcServer.Serve(listener)
 	log.Fatal(err)
 }
 
-func runRestProxy() {
+func runRestProxy(grpcHost string, restHost string) {
 	ctx := context.Background()
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{
@@ -57,13 +58,13 @@ func runRestProxy() {
 		grpc.WithBlock(),
 	}
 	err := api.RegisterNewsfeedConfiguratorHandlerFromEndpoint(
-		ctx, mux, grpcServerEndpoint, opts,
+		ctx, mux, grpcHost, opts,
 	)
 	if err != nil {
 		log.Fatalf("Can't connect to gRPC server: %v", err)
 	}
 
-	log.Printf("Start serving REST proxy on %s...", restProxyEndpoint)
-	err = http.ListenAndServe(restProxyEndpoint, mux)
+	log.Printf("Start serving REST proxy on %s...", restHost)
+	err = http.ListenAndServe(restHost, mux)
 	log.Fatal(err)
 }

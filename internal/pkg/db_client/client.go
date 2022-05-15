@@ -13,9 +13,9 @@ type Client struct {
 	conn *pgxpool.Pool
 }
 
-func NewClient(ctx context.Context, user, password, host, port, name string) *Client {
+func NewClient(ctx context.Context, user, password, host, name string) *Client {
 	url := fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s", user, password, host, port, name,
+		"postgres://%s:%s@%s/%s", user, password, host, name,
 	)
 	return &Client{
 		ctx:  ctx,

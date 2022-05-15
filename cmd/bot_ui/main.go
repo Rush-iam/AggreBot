@@ -2,19 +2,24 @@ package main
 
 import (
 	"AggreBot/internal/bot_ui"
+	"AggreBot/internal/pkg/config"
 	"AggreBot/internal/pkg/exit_signal"
 	"AggreBot/internal/pkg/grpc_client"
 	"AggreBot/internal/pkg/tg_client"
 	"context"
 )
 
-const grpcServerEndpoint = "localhost:8080"
-const tgToken = "5336663940:AAHwU2dP2TLSVde7EYLeVVJAsr5goVuVkz4"
+var flags = map[string]string{
+	"grpchost": "gRPC Server Host",
+	"tgtoken":  "Telegram Bot Token",
+}
 
 func main() {
-	grpcClient := grpc_client.New(context.Background(), grpcServerEndpoint)
+	cfg := config.FromFlags(flags)
+
+	grpcClient := grpc_client.New(context.Background(), cfg["grpchost"])
 	defer grpcClient.Close()
-	tgClient := tg_client.New(tgToken)
+	tgClient := tg_client.New(cfg["tgtoken"])
 
 	bot := bot_ui.NewBot(tgClient, grpcClient)
 	go bot.RunBotLoop()

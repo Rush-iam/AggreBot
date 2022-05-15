@@ -2,27 +2,29 @@ package main
 
 import (
 	"AggreBot/internal/courier"
+	"AggreBot/internal/pkg/config"
 	"AggreBot/internal/pkg/db_client"
 	"AggreBot/internal/pkg/exit_signal"
 	"context"
 )
 
-const (
-	dbUser     = "postgres"
-	dbPassword = "j3qq4"
-	dbHost     = "localhost"
-	dbPort     = "5432"
-	dbName     = "aggrebot"
-)
-const tgToken = "5336663940:AAHwU2dP2TLSVde7EYLeVVJAsr5goVuVkz4"
+var flags = map[string]string{
+	"dbuser":  "Database Username",
+	"dbpass":  "Database Password",
+	"dbhost":  "Database Host",
+	"dbname":  "Database Name",
+	"tgtoken": "Telegram Bot Token",
+}
 
 func main() {
+	cfg := config.FromFlags(flags)
+
 	db := db_client.NewClient(
-		context.Background(), dbUser, dbPassword, dbHost, dbPort, dbName,
+		context.Background(), cfg["dbuser"], cfg["dbpass"], cfg["dbhost"], cfg["dbname"],
 	)
 	defer db.Close()
 
-	worker := courier.NewCourier(db, tgToken)
+	worker := courier.NewCourier(db, cfg["tgtoken"])
 	go worker.RunReader()
 	go worker.RunSender()
 
