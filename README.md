@@ -25,7 +25,7 @@ flowchart LR
 subgraph External
     DIRECT{{Direct Requests}}
     TGUSER{{Telegram User}}
-    RSS{{RSS Source}}
+    RSS{{RSS/Atom Source}}
 end
 subgraph Docker Compose Application
         subgraph BOTSERVICE [Bot UI Service]
@@ -44,12 +44,12 @@ subgraph Docker Compose Application
 end
 
 DIRECT  ---|gRPC / REST| CONFIGURER
-TGUSER  ===|config<br/>messages| BOT ---|gRPC| CONFIGURER---|SQL| DB
+TGUSER  ===|config<br/>menu| BOT ---|gRPC| CONFIGURER---|SQL| DB
 RSS -.->|feeds| READER
 
-DB -->|GET<br/>user:source:timestamp| READER 
+DB -->|get<br/>active sources| READER 
 READER -->|Go<br/>queue| SENDER
-SENDER -->|UPDATE<br/>timestamp| DB
+SENDER ---|update<br/>entries log| DB
 TGUSER ===|newsfeed<br/>messages| SENDER
 
 ```
@@ -71,13 +71,13 @@ gRPC)_.
 
 #### Courier Service
 Состоит из двух компонентов:
-- **Reader** - читает пользовательские конфигурации из БД и обходит 
-  RSS источники. Новые записи передаёт для обработки к Sender.
+- **Reader** - читает все активные источники из БД и скачивает их записи, 
+  которые передаёт для обработки Sender.
 - **Sender** - рассылает новые записи пользователю (с учётом пользовательского 
-  фильтра), обновляя время последней записи в БД.
+  фильтра), обновляя в БД информацию об отправленных (лог хешей записей).
 
 #### Database Container
-База данных PostgreSQL. Хранится на host-машине.
+База данных PostgreSQL.
 
 ---
 _Артем **nGragas** Корников. Учебный проект для Ozon Route 256._
