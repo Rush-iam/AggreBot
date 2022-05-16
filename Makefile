@@ -1,3 +1,10 @@
+#     _                        ____        _
+#    / \   __ _  __ _ _ __ ___| __ )  ___ | |_
+#   / _ \ / _` |/ _` | '__/ _ \  _ \ / _ \| __|
+#  / ___ \ (_| | (_| | | |  __/ |_) | (_) | |_
+# /_/   \_\__, |\__, |_|  \___|____/ \___/ \__|
+#         |___/ |___/      by nGragas/Rush-iam
+
 include .env_local
 
 PROTOGEN = --go_out . --go-grpc_out . --grpc-gateway_out . --openapiv2_out ./api

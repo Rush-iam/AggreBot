@@ -1,0 +1,90 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    hostname: ${DB_HOST}
+    volumes:
+      - db:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    command: -p ${DB_PORT}
+    restart: always
+
+  migrations:
+    depends_on:
+      - db
+    build:
+      context: ../
+      dockerfile: ./deploy/migrations/Dockerfile
+      args:
+        - DB_HOST
+        - DB_PORT
+        - DB_NAME
+        - DB_USER
+        - DB_PASSWORD
+    restart: on-failure
+
+  backend:
+    depends_on:
+      - db
+    build:
+      context: ../
+      dockerfile: ./deploy/app/Dockerfile
+      args:
+        - APP_CMD_PATH=./cmd/backend
+    command: [
+      -dbhost, "${DB_HOST}:${DB_PORT}",
+      -dbname, "${DB_NAME}",
+      -dbuser, "${DB_USER}",
+      -dbpass, "${DB_PASSWORD}",
+      -grpchost, "${BACKEND_HOST}:${GRPC_PORT}",
+      -resthost, "${BACKEND_HOST}:${REST_PORT}",
+    ]
+    hostname: ${BACKEND_HOST}
+    ports:
+      - "${GRPC_PORT}:${GRPC_PORT}"
+      - "${REST_PORT}:${REST_PORT}"
+    restart: always
+
+  bot_ui:
+    depends_on:
+      - backend
+    build:
+      context: ../
+      dockerfile: ./deploy/app/Dockerfile
+      args:
+        - APP_CMD_PATH=./cmd/bot_ui
+    command: [
+      -tgtoken, "${TG_TOKEN}",
+      -grpchost, "${BACKEND_HOST}:${GRPC_PORT}",
+    ]
+    restart: always
+
+  courier:
+    depends_on:
+      - db
+    build:
+      context: ../
+      dockerfile: ./deploy/app/Dockerfile
+      args:
+        - APP_CMD_PATH=./cmd/courier
+    command: [
+      -dbhost, "${DB_HOST}:${DB_PORT}",
+      -dbname, "${DB_NAME}",
+      -dbuser, "${DB_USER}",
+      -dbpass, "${DB_PASSWORD}",
+      -tgtoken, "${TG_TOKEN}",
+    ]
+    restart: always
+
+volumes:
+  db:
+    driver_opts:
+      type: none
+      device: ${DB_DATA_HOST_DIR}
+      o: bind

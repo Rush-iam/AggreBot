@@ -57,7 +57,7 @@ func (bot *Bot) RunBotLoop() {
 }
 
 func (bot *Bot) handleMessage(msg *tgbotapi.Message) (string, *tgbotapi.InlineKeyboardMarkup) {
-	log.Printf("%s] %s", msg.From.UserName, msg.Text)
+	log.Printf("%s: %s", msg.From.UserName, msg.Text)
 
 	userState := bot.userState[msg.From.ID]
 	cmd := command.FromMessage(msg, userState)
