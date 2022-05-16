@@ -9,6 +9,8 @@ include .env_local
 
 PROTOGEN = --go_out . --go-grpc_out . --grpc-gateway_out . --openapiv2_out ./api
 
+GOOSE_DBSTRING="postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable"
+
 DB_ARG =-dbhost $(DB_HOST):$(DB_PORT)	\
 		-dbname $(DB_NAME)				\
 		-dbuser $(DB_USER)				\
@@ -20,6 +22,9 @@ TG_TOKEN_ARG	= -tgtoken $(TG_TOKEN)
 
 protogen:
 	protoc -I./api $(PROTOGEN) ./api/api.proto
+
+goose:
+	goose -dir ./migrations postgres $(GOOSE_DBSTRING) up
 
 run_backend:
 	go run ./cmd/backend $(DB_ARG) $(GRPC_HOST_ARG) $(REST_HOST_ARG)
