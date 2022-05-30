@@ -2,64 +2,8 @@ syntax = "proto3";
 package api;
 
 import "google/api/annotations.proto";
-import "google/protobuf/empty.proto";
 
 option go_package = "./internal/pkg/api";
-
-service NewsfeedConfigurator {
-  rpc addUser(UserId) returns (UserId) {
-    option (google.api.http) = {
-      post: "/user/{id}"
-    };
-  };
-  rpc getUser(UserId) returns (User) {
-    option (google.api.http) = {
-      get: "/user/{id}"
-    };
-  };
-  rpc updateUserFilter(User) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      patch: "/user/{id}/filter/{filter}"
-    };
-  };
-  rpc deleteUser(UserId) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      delete: "/user/{id}"
-    };
-  };
-
-  rpc addSource(AddSourceRequest) returns (SourceId) {
-    option (google.api.http) = {
-      post: "/source"
-      body: "*"
-    };
-  };
-  rpc getSource(SourceId) returns (Source) {
-    option (google.api.http) = {
-      get: "/source/{id}"
-    };
-  };
-  rpc getUserSources(UserId) returns (Sources) {
-    option (google.api.http) = {
-      get: "/user/{id}/sources"
-    };
-  };
-  rpc updateSourceName(UpdateSourceNameRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      patch: "/source/{id}/name/{name}"
-    };
-  };
-  rpc updateSourceIsActive(UpdateSourceIsActiveRequest) returns (UpdateSourceIsActiveResponse) {
-    option (google.api.http) = {
-      patch: "/source/{id}/{is_active}"
-    };
-  };
-  rpc deleteSource(SourceId) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      delete: "/source/{id}"
-    };
-  };
-}
 
 message User {
   int64 id = 1;
@@ -75,28 +19,90 @@ message Source {
   int32 retry_count = 6;
 }
 
-message UpdateSourceIsActiveRequest {
+service NewsfeedConfigurator {
+  rpc addUser(AddUserRequest) returns (AddUserResponse) {
+    option (google.api.http) = {
+      post: "/user/{id}"
+    };
+  };
+  rpc getUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/user/{id}"
+    };
+  };
+  rpc updateUserFilter(UpdateUserFilterRequest) returns (UpdateUserFilterResponse) {
+    option (google.api.http) = {
+      patch: "/user/{user.id}/filter/{user.filter}"
+    };
+  };
+  rpc deleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
+    option (google.api.http) = {
+      delete: "/user/{id}"
+    };
+  };
+
+  rpc addSource(AddSourceRequest) returns (AddSourceResponse) {
+    option (google.api.http) = {
+      post: "/source"
+      body: "*"
+    };
+  };
+  rpc getSource(GetSourceRequest) returns (GetSourceResponse) {
+    option (google.api.http) = {
+      get: "/source/{id}"
+    };
+  };
+  rpc getUserSources(GetUserSourcesRequest) returns (GetUserSourcesResponse) {
+    option (google.api.http) = {
+      get: "/user/{id}/sources"
+    };
+  };
+  rpc updateSourceName(UpdateSourceNameRequest) returns (UpdateSourceNameResponse) {
+    option (google.api.http) = {
+      patch: "/source/{id}/name/{name}"
+    };
+  };
+  rpc updateSourceIsActive(UpdateSourceIsActiveRequest) returns (UpdateSourceIsActiveResponse) {
+    option (google.api.http) = {
+      patch: "/source/{id}/{is_active}"
+    };
+  };
+  rpc deleteSource(DeleteSourceRequest) returns (DeleteSourceResponse) {
+    option (google.api.http) = {
+      delete: "/source/{id}"
+    };
+  };
+}
+
+message AddUserRequest {
   int64 id = 1;
-  bool is_active = 2;
 }
 
-message UpdateSourceIsActiveResponse {
-  string name = 1;
-  string url = 2;
-  bool is_active = 3;
+message AddUserResponse {
 }
 
-message Sources {
-  repeated Source sources = 1;
-}
-
-message UserId {
+message GetUserRequest {
   int64 id = 1;
 }
 
-message SourceId {
+message GetUserResponse {
+  User user = 1;
+}
+
+message UpdateUserFilterRequest {
+  User user = 1;
+}
+
+message UpdateUserFilterResponse {
+}
+
+message DeleteUserRequest {
   int64 id = 1;
 }
+
+message DeleteUserResponse {
+}
+
 
 message AddSourceRequest {
   int64 user_id = 1;
@@ -104,7 +110,46 @@ message AddSourceRequest {
   string url = 3;
 }
 
+message AddSourceResponse {
+  Source source = 1;
+}
+
+message GetSourceRequest {
+  int64 id = 1;
+}
+
+message GetSourceResponse {
+  Source source = 1;
+}
+
+message GetUserSourcesRequest {
+  int64 id = 1;
+}
+
+message GetUserSourcesResponse {
+  repeated Source sources = 1;
+}
+
 message UpdateSourceNameRequest {
   int64 id = 1;
   string name = 2;
+}
+
+message UpdateSourceNameResponse {
+}
+
+message UpdateSourceIsActiveRequest {
+  int64 id = 1;
+  bool is_active = 2;
+}
+
+message UpdateSourceIsActiveResponse {
+  Source source = 1;
+}
+
+message DeleteSourceRequest {
+  int64 id = 1;
+}
+
+message DeleteSourceResponse {
 }

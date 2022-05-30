@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-const readPeriod = time.Minute * 1
+const readPeriod = time.Second * 30
 
 func (c *courier) RunReader() {
 	for {
@@ -17,8 +17,8 @@ func (c *courier) RunReader() {
 			log.Printf("Reader: %v", err)
 		} else {
 			for _, source := range sources {
-				if c.sourcesInWork.Has(source.Id) == false {
-					c.sourcesInWork.Add(source.Id)
+				_, isBusy := c.sourcesInWork.LoadOrStore(source.Id, true)
+				if !isBusy {
 					go c.readerRoutine(source)
 				}
 			}

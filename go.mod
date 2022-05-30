@@ -4,10 +4,10 @@ go 1.18
 
 require (
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
-	github.com/golang/protobuf v1.5.2
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/jackc/pgx/v4 v4.16.1
 	github.com/mmcdole/gofeed v1.1.3
+	go.uber.org/ratelimit v0.2.0
 	google.golang.org/genproto v0.0.0-20220317150908-0efb43f6373e
 	google.golang.org/grpc v1.46.0
 	google.golang.org/protobuf v1.28.0
@@ -15,7 +15,9 @@ require (
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.0 // indirect
+	github.com/andres-erbsen/clock v0.0.0-20160526145045-9e14626cd129 // indirect
 	github.com/andybalholm/cascadia v1.3.1 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.12.1 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect

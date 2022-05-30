@@ -7,6 +7,8 @@ import (
 	"AggreBot/internal/pkg/grpc_client"
 	"AggreBot/internal/pkg/tg_client"
 	"context"
+	"log"
+	"time"
 )
 
 var flags = map[string]string{
@@ -17,12 +19,16 @@ var flags = map[string]string{
 func main() {
 	cfg := config.FromFlags(flags)
 
-	grpcClient := grpc_client.New(context.Background(), cfg["grpchost"])
-	defer grpcClient.Close()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
+	grpcClient := grpc_client.New(ctx, cfg["grpchost"])
+	cancel()
+
 	tgClient := tg_client.New(cfg["tgtoken"])
 
 	bot := bot_ui.NewBot(tgClient, grpcClient)
 	go bot.RunBotLoop()
 
 	<-exit_signal.Wait()
+	grpcClient.Close()
+	log.Printf("gRPC client shutted down")
 }

@@ -23,7 +23,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiSourceId"
+              "$ref": "#/definitions/apiAddSourceResponse"
             }
           },
           "default": {
@@ -55,7 +55,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiSource"
+              "$ref": "#/definitions/apiGetSourceResponse"
             }
           },
           "default": {
@@ -84,7 +84,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "properties": {}
+              "$ref": "#/definitions/apiDeleteSourceResponse"
             }
           },
           "default": {
@@ -115,7 +115,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "properties": {}
+              "$ref": "#/definitions/apiUpdateSourceNameResponse"
             }
           },
           "default": {
@@ -189,7 +189,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiUser"
+              "$ref": "#/definitions/apiGetUserResponse"
             }
           },
           "default": {
@@ -218,7 +218,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "properties": {}
+              "$ref": "#/definitions/apiDeleteUserResponse"
             }
           },
           "default": {
@@ -247,7 +247,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiUserId"
+              "$ref": "#/definitions/apiAddUserResponse"
             }
           },
           "default": {
@@ -264,43 +264,6 @@
             "required": true,
             "type": "string",
             "format": "int64"
-          }
-        ],
-        "tags": [
-          "NewsfeedConfigurator"
-        ]
-      }
-    },
-    "/user/{id}/filter/{filter}": {
-      "patch": {
-        "operationId": "NewsfeedConfigurator_updateUserFilter",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "properties": {}
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "filter",
-            "in": "path",
-            "required": true,
-            "type": "string"
           }
         ],
         "tags": [
@@ -315,7 +278,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiSources"
+              "$ref": "#/definitions/apiGetUserSourcesResponse"
             }
           },
           "default": {
@@ -332,6 +295,43 @@
             "required": true,
             "type": "string",
             "format": "int64"
+          }
+        ],
+        "tags": [
+          "NewsfeedConfigurator"
+        ]
+      }
+    },
+    "/user/{user.id}/filter/{user.filter}": {
+      "patch": {
+        "operationId": "NewsfeedConfigurator_updateUserFilter",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiUpdateUserFilterResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user.id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "user.filter",
+            "in": "path",
+            "required": true,
+            "type": "string"
           }
         ],
         "tags": [
@@ -353,6 +353,50 @@
         },
         "url": {
           "type": "string"
+        }
+      }
+    },
+    "apiAddSourceResponse": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "$ref": "#/definitions/apiSource"
+        }
+      }
+    },
+    "apiAddUserResponse": {
+      "type": "object"
+    },
+    "apiDeleteSourceResponse": {
+      "type": "object"
+    },
+    "apiDeleteUserResponse": {
+      "type": "object"
+    },
+    "apiGetSourceResponse": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "$ref": "#/definitions/apiSource"
+        }
+      }
+    },
+    "apiGetUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/apiUser"
+        }
+      }
+    },
+    "apiGetUserSourcesResponse": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/apiSource"
+          }
         }
       }
     },
@@ -382,39 +426,19 @@
         }
       }
     },
-    "apiSourceId": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
-    "apiSources": {
-      "type": "object",
-      "properties": {
-        "sources": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/apiSource"
-          }
-        }
-      }
-    },
     "apiUpdateSourceIsActiveResponse": {
       "type": "object",
       "properties": {
-        "name": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        },
-        "isActive": {
-          "type": "boolean"
+        "source": {
+          "$ref": "#/definitions/apiSource"
         }
       }
+    },
+    "apiUpdateSourceNameResponse": {
+      "type": "object"
+    },
+    "apiUpdateUserFilterResponse": {
+      "type": "object"
     },
     "apiUser": {
       "type": "object",
@@ -425,15 +449,6 @@
         },
         "filter": {
           "type": "string"
-        }
-      }
-    },
-    "apiUserId": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "int64"
         }
       }
     },

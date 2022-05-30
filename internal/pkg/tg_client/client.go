@@ -2,9 +2,8 @@ package tg_client
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"go.uber.org/ratelimit"
 	"log"
-	"sync"
-	"time"
 )
 
 func New(token string) *tgbotapi.BotAPI {
@@ -17,22 +16,13 @@ func New(token string) *tgbotapi.BotAPI {
 	return tgClient
 }
 
-const sendRpsLimit = 30
-const sendSleepPeriod = 1000 / sendRpsLimit
-
-var threadLock sync.Mutex
-var unlockTime time.Time
+var rl = ratelimit.New(30)
 
 func SendMessage(tgClient *tgbotapi.BotAPI, userId int64, text string, markup *tgbotapi.InlineKeyboardMarkup) error {
 	if text == "" {
 		return nil
 	}
-
-	threadLock.Lock()
-	time.Sleep(unlockTime.Sub(time.Now()))
-	unlockTime = time.Now().Add(time.Millisecond * sendSleepPeriod)
-	threadLock.Unlock()
-
+	rl.Take()
 	reply := tgbotapi.NewMessage(userId, text)
 	reply.ReplyMarkup = markup
 	_, err := tgClient.Send(reply)

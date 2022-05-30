@@ -31,6 +31,9 @@ func (db *Client) getActiveSourcesQuery() ([]*CourierSource, error) {
 			"JOIN users ON sources.user_id = users.id "+
 			"WHERE is_active = true",
 	)
+	if err != nil {
+		return nil, err
+	}
 	defer rows.Close()
 	var sources []*CourierSource
 	for rows.Next() {
@@ -68,5 +71,8 @@ func (db *Client) updateSourceRetryCountQuery(req *UpdateSourceRetryCountRequest
 		"UPDATE sources SET retry_count = $1 WHERE id = $2",
 		req.RetryCount, req.Id,
 	)
+	if err != nil {
+		return 0, err
+	}
 	return cmdTag.RowsAffected(), err
 }

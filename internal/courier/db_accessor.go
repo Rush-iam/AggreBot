@@ -1,7 +1,6 @@
 package courier
 
 import (
-	"AggreBot/internal/pkg/api"
 	"AggreBot/internal/pkg/db_client"
 	"log"
 )
@@ -18,11 +17,7 @@ func (c *courier) updateSourceRetryCount(sourceId int64, retryCount int32) {
 }
 
 func (c *courier) getSourceEntries(sourceId int64) []*db_client.Entry {
-	entries, err := c.db.GetSourceEntries(
-		&api.SourceId{
-			Id: sourceId,
-		},
-	)
+	entries, err := c.db.GetSourceEntries(sourceId)
 	if err != nil {
 		log.Printf("c.getSourceEntries: %v", err)
 		return []*db_client.Entry{}

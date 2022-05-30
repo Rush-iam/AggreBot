@@ -3,13 +3,16 @@ package grpc_client
 import "AggreBot/internal/pkg/api"
 
 func (c *Client) GetUserSources(userId int64) ([]*api.Source, error) {
-	sourcesResponse, err := c.api.GetUserSources(
+	resp, err := c.api.GetUserSources(
 		c.ctx,
-		&api.UserId{
+		&api.GetUserSourcesRequest{
 			Id: userId,
 		},
 	)
-	return sourcesResponse.Sources, err
+	if err != nil {
+		return nil, err
+	}
+	return resp.Sources, nil
 }
 
 func (c *Client) AddSource(userId int64, name, url string) error {
@@ -25,13 +28,16 @@ func (c *Client) AddSource(userId int64, name, url string) error {
 }
 
 func (c *Client) GetSource(sourceId int64) (*api.Source, error) {
-	source, err := c.api.GetSource(
+	resp, err := c.api.GetSource(
 		c.ctx,
-		&api.SourceId{
+		&api.GetSourceRequest{
 			Id: sourceId,
 		},
 	)
-	return source, err
+	if err != nil {
+		return nil, err
+	}
+	return resp.Source, nil
 }
 
 func (c *Client) UpdateSourceName(sourceId int64, name string) error {
@@ -45,21 +51,24 @@ func (c *Client) UpdateSourceName(sourceId int64, name string) error {
 	return err
 }
 
-func (c *Client) UpdateSourceIsActive(sourceId int64, isActive bool) (*api.UpdateSourceIsActiveResponse, error) {
-	toggleResponse, err := c.api.UpdateSourceIsActive(
+func (c *Client) UpdateSourceIsActive(sourceId int64, isActive bool) (*api.Source, error) {
+	resp, err := c.api.UpdateSourceIsActive(
 		c.ctx,
 		&api.UpdateSourceIsActiveRequest{
 			Id:       sourceId,
 			IsActive: isActive,
 		},
 	)
-	return toggleResponse, err
+	if err != nil {
+		return nil, err
+	}
+	return resp.Source, nil
 }
 
 func (c *Client) DeleteSource(sourceId int64) error {
 	_, err := c.api.DeleteSource(
 		c.ctx,
-		&api.SourceId{
+		&api.DeleteSourceRequest{
 			Id: sourceId,
 		},
 	)

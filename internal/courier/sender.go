@@ -24,7 +24,7 @@ func (c *courier) RunSender() {
 }
 
 func (c *courier) senderRoutine(job job) {
-	defer c.sourcesInWork.Remove(job.source.Id)
+	defer c.sourcesInWork.Delete(job.source.Id)
 
 	if job.wasReadError {
 		c.readErrorHandler(job.source)

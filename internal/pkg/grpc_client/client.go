@@ -6,7 +6,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
-	"time"
 )
 
 type Client struct {
@@ -15,12 +14,12 @@ type Client struct {
 	ctx        context.Context
 }
 
-func New(ctx context.Context, grpcServerEndpoint string) *Client {
-	connection := connect(grpcServerEndpoint)
+func New(connCtx context.Context, grpcServerEndpoint string) *Client {
+	connection := connect(connCtx, grpcServerEndpoint)
 	return &Client{
 		connection: connection,
 		api:        api.NewNewsfeedConfiguratorClient(connection),
-		ctx:        ctx,
+		ctx:        context.Background(),
 	}
 }
 
@@ -30,9 +29,7 @@ func (c *Client) Close() {
 	c.api = nil
 }
 
-func connect(grpcServerEndpoint string) *grpc.ClientConn {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
-	defer cancel()
+func connect(ctx context.Context, grpcServerEndpoint string) *grpc.ClientConn {
 	grpcConnection, err := grpc.DialContext(
 		ctx,
 		grpcServerEndpoint,

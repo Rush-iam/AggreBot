@@ -1,7 +1,6 @@
 package db_client
 
 import (
-	"AggreBot/internal/pkg/api"
 	"github.com/jackc/pgx/v4"
 )
 
@@ -16,14 +15,17 @@ type AddEntryRequest struct {
 	Hash     string
 }
 
-func (db *Client) GetSourceEntries(id *api.SourceId) ([]*Entry, error) {
+func (db *Client) GetSourceEntries(id int64) ([]*Entry, error) {
 	return db.getSourceEntriesQuery(id)
 }
 
-func (db *Client) getSourceEntriesQuery(id *api.SourceId) ([]*Entry, error) {
+func (db *Client) getSourceEntriesQuery(id int64) ([]*Entry, error) {
 	rows, err := db.conn.Query(db.ctx,
-		"SELECT * FROM entries_log WHERE source_id = $1", id.Id,
+		"SELECT * FROM entries_log WHERE source_id = $1", id,
 	)
+	if err != nil {
+		return nil, err
+	}
 	defer rows.Close()
 	var entries []*Entry
 	for rows.Next() {
@@ -70,5 +72,8 @@ func (db *Client) deleteEntriesQuery(ids []int64) (int64, error) {
 	cmdTag, err := db.conn.Exec(db.ctx,
 		"DELETE FROM entries_log WHERE id = ANY($1)", ids,
 	)
+	if err != nil {
+		return 0, err
+	}
 	return cmdTag.RowsAffected(), err
 }

@@ -6,6 +6,8 @@ import (
 	"AggreBot/internal/pkg/db_client"
 	"AggreBot/internal/pkg/exit_signal"
 	"context"
+	"log"
+	"time"
 )
 
 var flags = map[string]string{
@@ -19,9 +21,14 @@ var flags = map[string]string{
 func main() {
 	cfg := config.FromFlags(flags)
 
-	db := db_client.NewClient(
-		context.Background(), cfg["dbuser"], cfg["dbpass"], cfg["dbhost"], cfg["dbname"],
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
+	db, err := db_client.NewClient(
+		ctx, cfg["dbuser"], cfg["dbpass"], cfg["dbhost"], cfg["dbname"],
 	)
+	cancel()
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer db.Close()
 
 	worker := courier.NewCourier(db, cfg["tgtoken"])
