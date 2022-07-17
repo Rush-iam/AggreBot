@@ -1,11 +1,11 @@
 package courier
 
 import (
-	"AggreBot/internal/pkg/db_client"
-	"AggreBot/internal/pkg/set_utils"
-	"AggreBot/internal/pkg/tg_client"
 	"crypto/md5"
 	"fmt"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/db_client"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/set_utils"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/tg_client"
 	"github.com/mmcdole/gofeed"
 	"log"
 	"regexp"

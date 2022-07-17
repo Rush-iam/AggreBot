@@ -1,9 +1,9 @@
 package callbacks
 
 import (
-	"AggreBot/internal/bot_ui/command"
-	"AggreBot/internal/bot_ui/markup"
 	"fmt"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/bot_ui/command"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/bot_ui/markup"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 

@@ -1,8 +1,8 @@
 package courier
 
 import (
-	"AggreBot/internal/pkg/db_client"
-	"AggreBot/internal/pkg/tg_client"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/db_client"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/tg_client"
 	"log"
 )
 

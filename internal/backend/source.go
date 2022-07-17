@@ -1,8 +1,8 @@
 package backend
 
 import (
-	"AggreBot/internal/pkg/api"
 	"context"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/api"
 	"log"
 )
 

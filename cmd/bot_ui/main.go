@@ -1,12 +1,12 @@
 package main
 
 import (
-	"AggreBot/internal/bot_ui"
-	"AggreBot/internal/pkg/config"
-	"AggreBot/internal/pkg/exit_signal"
-	"AggreBot/internal/pkg/grpc_client"
-	"AggreBot/internal/pkg/tg_client"
 	"context"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/bot_ui"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/config"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/exit_signal"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/grpc_client"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/tg_client"
 	"log"
 	"time"
 )

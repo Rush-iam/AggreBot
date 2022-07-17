@@ -1,8 +1,8 @@
 package db_client
 
 import (
-	"AggreBot/internal/pkg/api"
 	"fmt"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/api"
 	"github.com/jackc/pgx/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

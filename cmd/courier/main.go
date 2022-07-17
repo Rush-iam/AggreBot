@@ -1,11 +1,11 @@
 package main
 
 import (
-	"AggreBot/internal/courier"
-	"AggreBot/internal/pkg/config"
-	"AggreBot/internal/pkg/db_client"
-	"AggreBot/internal/pkg/exit_signal"
 	"context"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/courier"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/config"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/db_client"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/exit_signal"
 	"log"
 	"time"
 )

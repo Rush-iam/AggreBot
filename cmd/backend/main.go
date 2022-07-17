@@ -1,13 +1,13 @@
 package main
 
 import (
-	"AggreBot/internal/backend"
-	"AggreBot/internal/pkg/api"
-	"AggreBot/internal/pkg/config"
-	"AggreBot/internal/pkg/db_client"
-	"AggreBot/internal/pkg/exit_signal"
 	"context"
 	"errors"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/backend"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/api"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/config"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/db_client"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/exit_signal"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

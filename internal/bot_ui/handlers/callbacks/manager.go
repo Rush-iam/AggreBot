@@ -1,8 +1,8 @@
 package callbacks
 
 import (
-	"AggreBot/internal/bot_ui/command"
-	"AggreBot/internal/pkg/grpc_client"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/bot_ui/command"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/grpc_client"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"strings"

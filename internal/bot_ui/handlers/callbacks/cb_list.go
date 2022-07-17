@@ -1,11 +1,11 @@
 package callbacks
 
 import (
-	"AggreBot/internal/bot_ui/command"
-	"AggreBot/internal/bot_ui/errors"
-	"AggreBot/internal/bot_ui/markup"
-	"AggreBot/internal/pkg/api"
 	"fmt"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/bot_ui/command"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/bot_ui/errors"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/bot_ui/markup"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/api"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 

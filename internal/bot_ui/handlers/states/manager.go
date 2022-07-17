@@ -1,10 +1,10 @@
 package states
 
 import (
-	"AggreBot/internal/bot_ui/command"
-	"AggreBot/internal/bot_ui/errors"
-	"AggreBot/internal/bot_ui/user_state"
-	"AggreBot/internal/pkg/grpc_client"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/bot_ui/command"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/bot_ui/errors"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/bot_ui/user_state"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/grpc_client"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 )

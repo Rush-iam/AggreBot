@@ -1,8 +1,8 @@
 package backend
 
 import (
-	"AggreBot/internal/pkg/api"
-	"AggreBot/internal/pkg/db_client"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/api"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/db_client"
 	"google.golang.org/grpc"
 )
 

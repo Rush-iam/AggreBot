@@ -1,6 +1,6 @@
 package grpc_client
 
-import "AggreBot/internal/pkg/api"
+import "github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/api"
 
 func (c *Client) AddUser(userId int64) error {
 	_, err := c.api.AddUser(

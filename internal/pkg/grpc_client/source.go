@@ -1,6 +1,6 @@
 package grpc_client
 
-import "AggreBot/internal/pkg/api"
+import "github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/api"
 
 func (c *Client) GetUserSources(userId int64) ([]*api.Source, error) {
 	resp, err := c.api.GetUserSources(

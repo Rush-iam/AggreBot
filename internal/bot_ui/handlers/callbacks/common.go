@@ -1,8 +1,8 @@
 package callbacks
 
 import (
-	"AggreBot/internal/bot_ui/errors"
-	"AggreBot/internal/pkg/api"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/bot_ui/errors"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/api"
 	"strconv"
 	"strings"
 )

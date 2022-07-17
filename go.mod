@@ -1,4 +1,4 @@
-module AggreBot
+module github.com/Rush-iam/RSS-AggreBot.git
 
 go 1.18
 

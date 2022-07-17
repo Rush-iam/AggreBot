@@ -1,8 +1,8 @@
 package grpc_client
 
 import (
-	"AggreBot/internal/pkg/api"
 	"context"
+	"github.com/Rush-iam/RSS-AggreBot.git/internal/pkg/api"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
